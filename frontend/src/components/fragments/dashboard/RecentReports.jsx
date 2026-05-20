@@ -4,16 +4,7 @@ import StatusBadge from "../../elements/badges/StatusBadge";
 import WarningBadge from "../../elements/badges/WarningBadge";
 import EmptyState from "../../elements/tables/EmptyState";
 import { ROUTES } from "../../../constants/routes";
-
-function formatNumber(value) {
-  if (value === null || value === undefined || value === "") {
-    return "-";
-  }
-
-  return Number(value).toLocaleString("id-ID", {
-    maximumFractionDigits: 2,
-  });
-}
+import { formatDateTime, formatNumber } from "../../../utils/formatters";
 
 function getResidentName(report) {
   return report.resident?.name || report.resident_name || report.name || "-";
@@ -35,8 +26,16 @@ function getEarlyWarning(report) {
   return report.early_warning || report.classification?.early_warning;
 }
 
+function getCreatedAt(report) {
+  return report.created_at || report.classification?.created_at;
+}
+
+function getClassificationId(report) {
+  return report.classification_id || report.id || report.classification?.id;
+}
+
 export default function RecentReports({ reports = [] }) {
-  const visibleReports = reports.slice(0, 4);
+  const visibleReports = reports.slice(0, 5);
 
   return (
     <section className="overflow-hidden rounded-xl border border-[#edeeef] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
@@ -54,7 +53,7 @@ export default function RecentReports({ reports = [] }) {
 
       {visibleReports.length ? (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] border-collapse text-left">
+          <table className="w-full min-w-[980px] border-collapse text-left">
             <thead>
               <tr className="border-b border-[#e1e3e4] bg-[#f8f9fa]/20">
                 <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-[#52637f]">
@@ -69,6 +68,12 @@ export default function RecentReports({ reports = [] }) {
                 <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-[#52637f]">
                   Peringatan Dini
                 </th>
+                <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-[#52637f]">
+                  Tanggal
+                </th>
+                <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-[#52637f]">
+                  Aksi
+                </th>
               </tr>
             </thead>
             <tbody className="text-sm leading-5 text-[#1a1a1a]">
@@ -76,6 +81,7 @@ export default function RecentReports({ reports = [] }) {
                 const name = getResidentName(report);
                 const warning = getEarlyWarning(report);
                 const isHighRisk = warning === "Risiko Tinggi";
+                const classificationId = getClassificationId(report);
 
                 return (
                   <tr
@@ -119,6 +125,21 @@ export default function RecentReports({ reports = [] }) {
                           ) : null}
                           <WarningBadge warning={warning} />
                         </span>
+                      ) : (
+                        <span className="text-[#64748b]">-</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-[#52637f]">
+                      {formatDateTime(getCreatedAt(report))}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      {classificationId ? (
+                        <Link
+                          to={ROUTES.reportDetail(classificationId)}
+                          className="inline-flex items-center justify-center rounded-full border border-[#d4e8d5] px-3 py-1.5 text-xs font-bold text-[#3a6936] transition hover:bg-[#edf6ea]"
+                        >
+                          Detail
+                        </Link>
                       ) : (
                         <span className="text-[#64748b]">-</span>
                       )}
