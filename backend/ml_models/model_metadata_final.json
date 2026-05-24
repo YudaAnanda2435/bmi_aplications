@@ -1,33 +1,40 @@
 {
-    "model_name": "Categorical Naive Bayes + BMI",
-    "target_original": "NObeyesdad",
-    "target_used": "Class",
-    "numeric_features": [
-        "Age",
-        "Height",
-        "Weight",
-        "BMI",
-        "FCVC",
-        "NCP",
-        "CH2O",
-        "FAF",
-        "TUE"
-    ],
-    "categorical_features": [
-        "Gender",
-        "family_history_with_overweight",
-        "FAVC",
-        "CAEC",
-        "SMOKE",
-        "SCC",
-        "CALC",
-        "MTRANS"
+    "version": "FINAL_NB_ANTHROPOMETRIC",
+    "model_name": "Categorical Naive Bayes with Anthropometric Feature Selection",
+    "description": "Model Naive Bayes untuk klasifikasi status obesitas menggunakan fitur antropometri, yaitu Gender, Age, Height, Weight, dan BMI_Category. Atribut pola makan dan aktivitas digunakan pada tahap rekomendasi berbasis aturan.",
+    "target_classes": [
+        "Normal",
+        "Obesity",
+        "Overweight",
+        "Underweight"
     ],
     "input_features": [
         "Gender",
         "Age",
         "Height",
         "Weight",
+        "BMI_Category"
+    ],
+    "numeric_features": [
+        "Age",
+        "Height",
+        "Weight"
+    ],
+    "categorical_features": [
+        "Gender",
+        "BMI_Category"
+    ],
+    "additional_feature": "BMI_Category",
+    "additional_features": [
+        "BMI_Category"
+    ],
+    "bmi_category_rules": {
+        "BMI_Underweight": "BMI < 18.5",
+        "BMI_Normal": "18.5 <= BMI < 25",
+        "BMI_Overweight": "25 <= BMI < 30",
+        "BMI_Obesity": "BMI >= 30"
+    },
+    "recommendation_features": [
         "family_history_with_overweight",
         "FAVC",
         "FCVC",
@@ -39,22 +46,13 @@
         "FAF",
         "TUE",
         "CALC",
-        "MTRANS",
-        "BMI"
+        "MTRANS"
     ],
-    "class_labels": [
-        "Normal",
-        "Obesity",
-        "Overweight",
-        "Underweight"
-    ],
-    "test_size": 0.2,
-    "random_state": 42,
-    "additional_feature": "BMI",
-    "bmi_formula": "BMI = Weight / Height^2",
-    "best_params": {
-        "classifier__alpha": 0.001,
-        "preprocessor__num__n_bins": 3,
-        "preprocessor__num__strategy": "uniform"
-    }
+    "metrics": {
+        "accuracy": 0.9905437352245863,
+        "precision_weighted": 0.9906789176455859,
+        "recall_weighted": 0.9905437352245863,
+        "f1_weighted": 0.9905414557591973
+    },
+    "note": "BMI_Category digunakan sebagai fitur input model Naive Bayes, bukan sebagai rule manual untuk mengganti hasil klasifikasi. Prediksi tetap dihasilkan oleh model Naive Bayes."
 }

@@ -1,0 +1,60 @@
+{
+    "model_name": "Categorical Naive Bayes + BMI",
+    "target_original": "NObeyesdad",
+    "target_used": "Class",
+    "numeric_features": [
+        "Age",
+        "Height",
+        "Weight",
+        "BMI",
+        "FCVC",
+        "NCP",
+        "CH2O",
+        "FAF",
+        "TUE"
+    ],
+    "categorical_features": [
+        "Gender",
+        "family_history_with_overweight",
+        "FAVC",
+        "CAEC",
+        "SMOKE",
+        "SCC",
+        "CALC",
+        "MTRANS"
+    ],
+    "input_features": [
+        "Gender",
+        "Age",
+        "Height",
+        "Weight",
+        "family_history_with_overweight",
+        "FAVC",
+        "FCVC",
+        "NCP",
+        "CAEC",
+        "SMOKE",
+        "CH2O",
+        "SCC",
+        "FAF",
+        "TUE",
+        "CALC",
+        "MTRANS",
+        "BMI"
+    ],
+    "class_labels": [
+        "Normal",
+        "Obesity",
+        "Overweight",
+        "Underweight"
+    ],
+    "test_size": 0.2,
+    "random_state": 42,
+    "additional_feature": "BMI",
+    "bmi_formula": "BMI = Weight / Height^2",
+    "best_params": {
+        "classifier__alpha": 0.001,
+        "preprocessor__num__n_bins": 3,
+        "preprocessor__num__strategy": "uniform"
+    }
+}

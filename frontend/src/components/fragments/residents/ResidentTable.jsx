@@ -386,11 +386,11 @@ export default function ResidentTable() {
             </div>
 
             <div className="flex flex-col gap-3 border-t border-[#c2c9bc]/30 bg-[#f3f4f5]/30 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-              <span className="text-sm leading-5 text-[#64748b]">
+              <span className="text-sm leading-5 flex justify-end text-[#64748b]">
                 Menampilkan {visibleStart}-{visibleEnd} dari{" "}
                 {filteredResidents.length} data
               </span>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 justify-end">
                 <button
                   type="button"
                   onClick={() =>

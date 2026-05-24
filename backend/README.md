@@ -22,7 +22,7 @@ Tidak ada fitur di luar scope skripsi seperti konsultasi dokter, diagnosis medis
 
 ## Model Final
 
-Backend hanya memakai model final:
+Backend memakai model final:
 
 ```text
 ml_models/naive_bayes_obesity_model_final.pkl
@@ -37,11 +37,10 @@ ml_models/model_metadata_final.json
 Fitur model tetap:
 
 ```text
-Gender, Age, Height, Weight, family_history_with_overweight, FAVC,
-FCVC, NCP, CAEC, SMOKE, CH2O, SCC, FAF, TUE, CALC, MTRANS, BMI
+Gender, Age, Height, Weight, BMI_Category
 ```
 
-Hasil klasifikasi tetap ditentukan oleh model Naive Bayes. Rekomendasi pola diet dan peringatan dini disusun oleh service rule-based/forward chaining berdasarkan class, BMI, dan atribut gaya hidup input.
+Backend tetap menghitung BMI otomatis, lalu membuat `BMI_Category` sebagai fitur input model final. Hasil klasifikasi tetap ditentukan oleh model Naive Bayes, bukan rule BMI manual. Field pola makan dan aktivitas tetap disimpan dan dipakai untuk rekomendasi rule-based/forward chaining.
 
 ## Install
 

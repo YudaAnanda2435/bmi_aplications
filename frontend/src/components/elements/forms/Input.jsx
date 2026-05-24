@@ -4,8 +4,14 @@ export default function Input({
   helperText,
   error,
   className = "",
+  onWheel,
   ...props
 }) {
+  function handleWheel(event) {
+    event.target.blur();
+    onWheel?.(event);
+  }
+
   return (
     <div>
       {label ? (
@@ -27,6 +33,7 @@ export default function Input({
             : "border-slate-300 focus:border-primary-600 focus:ring-primary-100",
           className,
         ].join(" ")}
+        onWheel={handleWheel}
         {...props}
       />
       {helperText ? (

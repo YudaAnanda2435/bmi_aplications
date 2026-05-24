@@ -145,7 +145,7 @@ export default function DashboardLayout() {
       <div className="md:pl-[240px]">
         <header className="sticky top-0 z-30 flex min-h-16 items-center justify-between bg-[#f8f9fa]/90 px-4 backdrop-blur md:px-8">
           <div className="flex min-w-0 flex-1 items-center">
-            <div className="flex items-center gap-2 md:hidden">
+            <div className="flex items-center gap-1 md:gap-2 md:hidden">
               <button
                 type="button"
                 aria-label="Buka menu navigasi"
@@ -177,14 +177,14 @@ export default function DashboardLayout() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-[#42493f]">
+          <div className="flex items-center gap-1 md:gap-4 text-[#42493f]">
             <button
               type="button"
               aria-label="Pemberitahuan"
-              className="relative rounded-full p-1.5 transition hover:text-[#3a6936]"
+              className="relative rounded-full md:p-1.5 transition hover:text-[#3a6936]"
             >
               <Bell aria-hidden="true" className="h-5 w-5" />
-              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#f44336]" />
+              <span className="absolute md:right-1.5 top-px md:top-1.5 h-2 w-2 rounded-full bg-[#f44336]" />
             </button>
             <button
               type="button"

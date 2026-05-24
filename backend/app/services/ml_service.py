@@ -8,28 +8,15 @@ import pandas as pd
 
 from app.core.config import get_settings
 from app.services.recommendation_service import get_recommendation_plan
-from app.utils.measurement import calculate_bmi, normalize_height_to_meter
+from app.utils.measurement import calculate_bmi, get_bmi_category, normalize_height_to_meter
 
 
-FINAL_MODEL_FILENAME = "naive_bayes_obesity_model_final.pkl"
 DEFAULT_FEATURE_NAMES = [
     "Gender",
     "Age",
     "Height",
     "Weight",
-    "family_history_with_overweight",
-    "FAVC",
-    "FCVC",
-    "NCP",
-    "CAEC",
-    "SMOKE",
-    "CH2O",
-    "SCC",
-    "FAF",
-    "TUE",
-    "CALC",
-    "MTRANS",
-    "BMI",
+    "BMI_Category",
 ]
 OUTPUT_CLASSES = ["Underweight", "Normal", "Overweight", "Obesity"]
 
@@ -53,9 +40,6 @@ class MLService:
         if self.model is not None:
             return self.model
 
-        if self.model_path.name != FINAL_MODEL_FILENAME:
-            raise ValueError("Only naive_bayes_obesity_model_final.pkl is allowed")
-
         if not self.model_path.exists():
             raise FileNotFoundError(f"Model file not found: {self.model_path}")
 
@@ -75,6 +59,7 @@ class MLService:
 
     def get_model_info(self) -> dict[str, Any]:
         metadata = self.load_metadata()
+        class_labels = metadata.get("class_labels") or metadata.get("target_classes") or OUTPUT_CLASSES
         model_loaded = False
         model_error = None
 
@@ -86,14 +71,21 @@ class MLService:
 
         return {
             "model_name": metadata.get("model_name"),
+            "version": metadata.get("version"),
+            "model_version": self._get_model_version(metadata),
             "algorithm": "Categorical Naive Bayes",
             "model_file": self.model_path.name,
             "metadata_file": self.metadata_path.name,
             "model_loaded": model_loaded,
             "model_error": model_error,
             "input_features": metadata.get("input_features", DEFAULT_FEATURE_NAMES),
-            "class_labels": metadata.get("class_labels", OUTPUT_CLASSES),
+            "class_labels": class_labels,
+            "numeric_features": metadata.get("numeric_features"),
+            "categorical_features": metadata.get("categorical_features"),
+            "additional_feature": metadata.get("additional_feature"),
+            "additional_features": metadata.get("additional_features"),
             "bmi_formula": metadata.get("bmi_formula", "BMI = Weight / Height^2"),
+            "bmi_category_rules": metadata.get("bmi_category_rules"),
         }
 
     def predict(self, input_data: dict[str, Any]) -> dict[str, Any]:
@@ -105,9 +97,18 @@ class MLService:
             height=height_in_meter,
             weight=weight,
         )
+        rounded_bmi = round(bmi, 2)
+        bmi_category = get_bmi_category(rounded_bmi)
 
         features = metadata.get("input_features", DEFAULT_FEATURE_NAMES)
-        model_input = {**input_data, "Height": height_in_meter, "Weight": weight, "BMI": bmi}
+        model_input = {
+            **input_data,
+            "Height": height_in_meter,
+            "Weight": weight,
+            "BMI": rounded_bmi,
+            "BMI_Category": bmi_category,
+        }
+        self._validate_model_input(model_input, features)
         dataframe = pd.DataFrame([[model_input[name] for name in features]], columns=features)
 
         predicted_class = str(model.predict(dataframe)[0])
@@ -120,10 +121,13 @@ class MLService:
 
         return {
             "predicted_class": predicted_class,
-            "bmi": round(bmi, 2),
+            "bmi": rounded_bmi,
+            "bmi_category": bmi_category,
+            "model_version": self._get_model_version(metadata),
             "probabilities": probabilities,
             "recommendation": recommendation_plan["recommendation"],
             "early_warning": recommendation_plan["early_warning"],
+            "goal": recommendation_plan["goal"],
             "note": "Informasi awal dan alat bantu, tidak menggantikan saran tenaga kesehatan.",
             "diet_pattern": recommendation_plan["diet_pattern"],
             "recommendation_summary": recommendation_plan["recommendation_summary"],
@@ -153,6 +157,39 @@ class MLService:
     @staticmethod
     def calculate_bmi(height: float, weight: float) -> float:
         return calculate_bmi(height=height, weight=weight)
+
+    def _get_model_version(self, metadata: dict[str, Any]) -> str | None:
+        version = metadata.get("version")
+        if version:
+            return str(version)
+
+        stem = self.model_path.stem.lower()
+        if "v6" in stem:
+            return "V6"
+        if "final" in stem:
+            return "FINAL_NB_ANTHROPOMETRIC"
+        return "FINAL_NB_ANTHROPOMETRIC"
+
+    @staticmethod
+    def _validate_model_input(model_input: dict[str, Any], features: list[str]) -> None:
+        missing_features = [feature for feature in features if feature not in model_input]
+        if missing_features:
+            raise ValueError(f"Missing model features: {', '.join(missing_features)}")
+
+        invalid_features: list[str] = []
+        for feature in features:
+            value = model_input[feature]
+            if value is None:
+                invalid_features.append(feature)
+                continue
+            if isinstance(value, str) and value.strip() in {"", "-"}:
+                invalid_features.append(feature)
+                continue
+            if not isinstance(value, str) and pd.isna(value):
+                invalid_features.append(feature)
+
+        if invalid_features:
+            raise ValueError(f"Invalid model feature values: {', '.join(invalid_features)}")
 
 
 @lru_cache

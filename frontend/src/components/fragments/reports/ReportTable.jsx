@@ -352,11 +352,11 @@ export default function ReportTable() {
             </div>
 
             <div className="mt-4 flex shrink-0 flex-col gap-3 border-t border-[#e7e8e9] pt-4 sm:flex-row sm:items-center sm:justify-between">
-              <span className="text-sm leading-5 text-[#52637f]">
+              <span className="text-sm flex items-center justify-end leading-5 text-[#52637f]">
                 Menampilkan {visibleStart}-{visibleEnd} dari {reports.length}{" "}
                 data
               </span>
-              <div className="flex gap-1">
+              <div className="flex justify-end gap-1">
                 <button
                   type="button"
                   onClick={() =>

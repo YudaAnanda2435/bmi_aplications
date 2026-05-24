@@ -1,103 +1,33 @@
-# Sinagar DietCare
+# Sistem Klasifikasi Status Obesitas dan Rekomendasi Pola Diet Berbasis Web
 
-Sinagar DietCare adalah web application internal berbasis admin untuk mengelola data penduduk Kampung Sinagar, menjalankan klasifikasi status obesitas menggunakan model Naive Bayes, menampilkan rekomendasi pola diet berbasis Rule-Based Recommendation / Forward Chaining, memberikan peringatan dini, serta menyediakan laporan dan riwayat klasifikasi.
+Sinagar DietCare adalah web admin untuk mengelola data penduduk, melakukan klasifikasi status obesitas, menampilkan rekomendasi pola diet, jadwal makan, peringatan dini, laporan, riwayat klasifikasi, import Excel, dan cetak PDF laporan.
 
-Project ini dibuat untuk kebutuhan akademik/skripsi. Sistem ditujukan untuk admin, peneliti, atau petugas pendataan, bukan untuk akses publik oleh penduduk.
+Sistem ini dibuat untuk kebutuhan akademik/skripsi dengan studi kasus masyarakat Kampung Sinagar. Pengguna utama sistem adalah admin, peneliti, atau pengelola data. Penduduk tidak memiliki akun publik dan hanya menjadi data yang dikelola oleh admin.
 
-## Deskripsi Singkat
+## Deskripsi Singkat Sistem
 
-Sinagar DietCare membantu admin melakukan pendataan penduduk, menghitung BMI secara otomatis dari tinggi dan berat badan, menjalankan klasifikasi status obesitas, menampilkan rekomendasi pola diet, memberikan peringatan dini, dan menyusun laporan hasil klasifikasi.
+Sinagar DietCare digunakan oleh admin atau pengelola untuk:
 
-Sistem ini juga mendukung import data penduduk dari Excel, klasifikasi massal, halaman laporan hasil klasifikasi terakhir per penduduk, riwayat klasifikasi, dan cetak PDF detail laporan.
-
-## Tujuan Sistem
-
-Tujuan utama Sinagar DietCare adalah:
-
-- Mengelola data penduduk Kampung Sinagar.
-- Menghitung BMI secara otomatis dari tinggi dan berat badan.
-- Mengklasifikasikan status obesitas penduduk.
-- Memberikan rekomendasi pola diet sebagai informasi awal.
-- Memberikan peringatan dini berdasarkan hasil klasifikasi.
-- Menampilkan laporan klasifikasi terakhir setiap penduduk.
-- Menampilkan riwayat seluruh proses klasifikasi.
-- Mendukung import Excel untuk data penduduk.
-- Mendukung klasifikasi massal dari data Excel.
-- Mendukung cetak PDF detail laporan.
-
-## Catatan Penting Non-Medis
-
-Sistem ini hanya memberikan informasi awal dan alat bantu. Sistem tidak menggantikan diagnosis, saran dokter, ahli gizi, atau tenaga kesehatan.
-
-Hasil klasifikasi, rekomendasi pola diet, jadwal makan, dan peringatan dini yang tampil di sistem harus dipahami sebagai keluaran sistem berbasis data, bukan keputusan medis final.
-
-## Fitur Utama
-
-- Login admin.
-- Dashboard ringkasan sistem.
-- Manajemen data penduduk.
-- Tambah data penduduk.
-- Edit data penduduk.
-- Hapus data penduduk.
-- Detail data penduduk.
-- Klasifikasi status obesitas.
-- Rekomendasi pola diet.
-- Jadwal makan.
-- Peringatan dini.
-- Laporan klasifikasi terakhir per penduduk.
-- Riwayat klasifikasi.
+- Mengelola data penduduk.
+- Input manual data penduduk.
 - Import Excel data penduduk.
-- Klasifikasi massal.
-- Download template Excel.
-- Cetak PDF detail laporan.
-- Landing page.
-- Toast notification.
-- Loading modal.
-- Skeleton loading.
-- UX improvement untuk aksi penting dan halaman data.
+- Klasifikasi status obesitas.
+- Melihat rekomendasi pola diet.
+- Melihat jadwal makan.
+- Melihat peringatan dini.
+- Melihat laporan klasifikasi terakhir.
+- Melihat riwayat klasifikasi.
+- Mencetak laporan PDF.
 
-## Metode yang Digunakan
+Sistem ini adalah aplikasi internal berbasis web, bukan aplikasi publik untuk penduduk.
 
-### Naive Bayes
+## Penjelasan Metode
 
-Naive Bayes digunakan untuk melakukan klasifikasi status obesitas. Model diproses di backend melalui service machine learning dan memakai model final:
+Sistem memakai dua metode karena proses klasifikasi dan proses rekomendasi memiliki tujuan yang berbeda.
 
-```text
-backend/ml_models/naive_bayes_obesity_model_final.pkl
-backend/ml_models/model_metadata_final.json
-```
+### 1. Naive Bayes untuk Klasifikasi Status Obesitas
 
-Output klasifikasi utama:
-
-- Underweight
-- Normal
-- Overweight
-- Obesity
-
-### Rule-Based Recommendation / Forward Chaining
-
-Rule-Based Recommendation / Forward Chaining digunakan untuk menyusun rekomendasi pola diet, jadwal makan, dan peringatan dini berdasarkan hasil klasifikasi serta beberapa atribut input penduduk.
-
-Dasar rekomendasi mengacu pada:
-
-- Kemenkes - Isi Piringku / Pedoman Gizi Seimbang.
-- WHO - Healthy Diet.
-- NHS - Healthy Ways to Gain Weight.
-- AHA/ACC/TOS Guideline - Management of Overweight and Obesity.
-
-### BMI Otomatis
-
-BMI dihitung otomatis oleh backend dari tinggi dan berat badan. Admin tidak perlu dan tidak boleh mengisi BMI secara manual.
-
-Rumus umum:
-
-```text
-BMI = Weight / (Height ^ 2)
-```
-
-Height digunakan dalam satuan meter pada proses backend. Jika input dari UI atau Excel berupa cm, sistem melakukan normalisasi agar sesuai dengan kebutuhan perhitungan.
-
-## Output Sistem
+Naive Bayes digunakan untuk menentukan kelas status obesitas penduduk.
 
 Output klasifikasi:
 
@@ -106,66 +36,255 @@ Output klasifikasi:
 - Overweight
 - Obesity
 
-Output tambahan:
+Model Naive Bayes final menggunakan fitur:
 
-- Pola diet.
-- Rekomendasi utama.
+- Gender
+- Age
+- Height
+- Weight
+- BMI_Category
+
+`BMI_Category` dibentuk dari nilai BMI dengan aturan:
+
+| Nilai BMI | BMI_Category |
+| --- | --- |
+| BMI < 18.5 | BMI_Underweight |
+| 18.5 <= BMI < 25 | BMI_Normal |
+| 25 <= BMI < 30 | BMI_Overweight |
+| BMI >= 30 | BMI_Obesity |
+
+Catatan penting:
+
+- `BMI_Category` hanya digunakan sebagai fitur input model Naive Bayes.
+- Hasil klasifikasi tidak ditentukan manual oleh BMI.
+- `predicted_class` tetap berasal dari model Naive Bayes.
+- Backend menghitung BMI secara otomatis dari tinggi dan berat badan.
+- Frontend tidak meminta admin mengisi BMI secara manual.
+
+### 2. Rule-Based Recommendation / Forward Chaining untuk Rekomendasi
+
+Rule-Based Recommendation / Forward Chaining digunakan setelah hasil klasifikasi Naive Bayes keluar.
+
+Metode ini menghasilkan:
+
+- Rekomendasi pola diet.
 - Jadwal makan.
 - Peringatan dini.
-- Probabilitas klasifikasi.
-- Dasar rekomendasi.
 - Catatan sistem.
+- Dasar rekomendasi.
 
-## Struktur Folder Project
+Atribut yang digunakan untuk rekomendasi:
+
+- family_history_with_overweight
+- FAVC
+- FCVC
+- NCP
+- CAEC
+- SMOKE
+- CH2O
+- SCC
+- FAF
+- TUE
+- CALC
+- MTRANS
+
+Atribut tersebut tetap dipakai oleh sistem, tetapi bukan sebagai fitur utama model Naive Bayes final. Atribut pola makan, kebiasaan hidup, dan aktivitas digunakan sebagai fakta kondisi untuk proses rekomendasi berbasis aturan.
+
+Dengan pembagian ini:
+
+- Naive Bayes menentukan status obesitas.
+- Rule-Based Recommendation / Forward Chaining memberi rekomendasi yang lebih terarah berdasarkan hasil klasifikasi dan atribut kebiasaan hidup.
+
+## Pemanfaatan Dataset
+
+Dataset obesitas tetap digunakan dalam sistem ini. Dataset tidak dibuang, tetapi fungsinya dipisahkan sesuai kebutuhan metode.
+
+Pemanfaatan dataset:
+
+- Untuk Naive Bayes: dataset digunakan untuk training dan testing model klasifikasi status obesitas.
+- Untuk Rule-Based Recommendation: atribut dataset menjadi dasar field input dan fakta kondisi untuk rekomendasi.
+
+Pembagian penggunaan atribut:
+
+- Fitur antropometri digunakan untuk klasifikasi:
+  - Gender
+  - Age
+  - Height
+  - Weight
+  - BMI_Category
+
+- Atribut pola makan, kebiasaan hidup, dan aktivitas digunakan untuk rekomendasi:
+  - family_history_with_overweight
+  - FAVC
+  - FCVC
+  - NCP
+  - CAEC
+  - SMOKE
+  - CH2O
+  - SCC
+  - FAF
+  - TUE
+  - CALC
+  - MTRANS
+
+## Fitur Utama Aplikasi
+
+- Login admin.
+- Dashboard.
+- Kelola data penduduk.
+- Input manual data penduduk.
+- Import Excel.
+- Klasifikasi status obesitas.
+- Rekomendasi pola diet.
+- Jadwal makan.
+- Peringatan dini.
+- Laporan.
+- Riwayat klasifikasi.
+- Detail laporan.
+- Cetak PDF laporan.
+- Logout.
+
+## Alur Kerja Sistem
+
+```text
+Admin input data penduduk
+|
+v
+Sistem validasi data
+|
+v
+Sistem hitung BMI
+|
+v
+Sistem bentuk BMI_Category
+|
+v
+Naive Bayes klasifikasi status obesitas
+|
+v
+Sistem menghasilkan Underweight / Normal / Overweight / Obesity
+|
+v
+Rule-Based Recommendation memproses atribut kebiasaan hidup
+|
+v
+Sistem menghasilkan rekomendasi diet, jadwal makan, peringatan dini, catatan, dan dasar rekomendasi
+|
+v
+Hasil disimpan ke laporan dan riwayat
+|
+v
+Admin dapat mencetak PDF laporan
+```
+
+## Struktur Folder Proyek
+
+Struktur utama repository:
 
 ```text
 bmi_app/
+|-- backend/
+|-- frontend/
 |-- AGENTS.md
 |-- README.md
-|-- backend/
-|   |-- AGENTS.md
-|   |-- app/
-|   |   |-- api/
-|   |   |-- core/
-|   |   |-- db/
-|   |   |-- models/
-|   |   |-- schemas/
-|   |   |-- services/
-|   |   `-- utils/
-|   |-- ml_models/
-|   |-- requirements.txt
-|   |-- .env.example
-|   `-- ...
-`-- frontend/
-    |-- AGENTS.md
-    |-- src/
-    |   |-- components/
-    |   |-- constants/
-    |   |-- context/
-    |   |-- hooks/
-    |   |-- layouts/
-    |   |-- pages/
-    |   |-- routes/
-    |   |-- services/
-    |   `-- utils/
-    |-- package.json
-    |-- .env.example
-    `-- ...
+|-- .gitignore
+|-- naive_bayes_obesity_model_final.pkl
+`-- model_metadata_final.json
 ```
 
-## Persyaratan Sistem
+Catatan: file model final yang digunakan aplikasi harus berada di `backend/ml_models/`. File model di root dapat dianggap sebagai salinan atau arsip, tetapi konfigurasi backend mengarah ke folder `backend/ml_models/`.
 
-Pastikan perangkat sudah memiliki:
+### Backend
+
+```text
+backend/
+|-- app/
+|-- ml_models/
+|-- requirements.txt
+|-- .env.example
+|-- AGENTS.md
+|-- README.md
+`-- SWAGGER_TESTING.md
+```
+
+Folder penting backend:
+
+- `app/`: kode FastAPI, route API, model database, service ML, service rekomendasi, service import, dan service PDF.
+- `ml_models/`: file model Naive Bayes final dan metadata model.
+- `requirements.txt`: dependency Python.
+- `.env.example`: template konfigurasi environment backend.
+
+### Frontend
+
+```text
+frontend/
+|-- src/
+|-- dist/
+|-- node_modules/
+|-- package.json
+|-- package-lock.json
+|-- vite.config.js
+|-- .env.example
+|-- .gitignore
+`-- AGENTS.md
+```
+
+Folder penting frontend:
+
+- `src/`: kode React, halaman, layout, fragment, elemen UI, services, hooks, dan utils.
+- `package.json`: dependency dan script frontend.
+- `.env.example`: template konfigurasi API base URL.
+- `dist/`: hasil build frontend jika sudah menjalankan `npm run build`.
+
+## Kebutuhan Sistem
+
+### Backend
 
 - Python 3.10 atau lebih baru.
+- FastAPI.
+- Uvicorn.
+- SQLAlchemy.
+- MySQL.
+- PyMySQL.
+- scikit-learn.
+- pandas.
+- numpy.
+- joblib.
+- ReportLab.
+- openpyxl.
+
+Dependency backend lengkap ada di:
+
+```text
+backend/requirements.txt
+```
+
+### Frontend
+
 - Node.js 18 atau lebih baru.
 - npm.
-- MySQL.
-- XAMPP.
-- Browser modern, misalnya Chrome, Edge, atau Firefox.
-- Git, opsional untuk clone repository.
+- React.
+- Vite.
+- Tailwind CSS.
+- Axios.
+- React Router.
+- lucide-react.
+- Material UI.
+- react-toastify.
+- AOS.
+- Swiper.
 
-## Setup Database MySQL
+Dependency frontend lengkap ada di:
+
+```text
+frontend/package.json
+```
+
+### Database
+
+Project menggunakan MySQL. Pada setup lokal, MySQL dapat dijalankan melalui XAMPP.
+
+## Setup Database
 
 1. Buka XAMPP Control Panel.
 2. Start `Apache` dan `MySQL`.
@@ -175,15 +294,13 @@ Pastikan perangkat sudah memiliki:
 http://localhost/phpmyadmin
 ```
 
-4. Buat database baru dengan SQL berikut:
+4. Buat database:
 
 ```sql
 CREATE DATABASE sinagar_dietcare CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Database ini akan dipakai oleh backend FastAPI melalui SQLAlchemy.
-
-## Setup Backend
+## Instalasi Backend
 
 Masuk ke folder backend:
 
@@ -209,18 +326,35 @@ Install dependency:
 pip install -r requirements.txt
 ```
 
-Dependency PDF dan Excel idealnya sudah tersedia di `requirements.txt`. Jika tetap muncul error module, install manual:
+Pastikan file model final tersedia:
+
+```text
+backend/ml_models/naive_bayes_obesity_model_final.pkl
+backend/ml_models/model_metadata_final.json
+```
+
+Jalankan server backend:
 
 ```bash
-pip install reportlab
-pip install openpyxl pandas
+python -m uvicorn app.main:app --reload
 ```
+
+Alternatif jika ingin langsung memakai Python dari venv Windows:
+
+```bash
+.\venv\Scripts\python.exe -m uvicorn app.main:app --reload
+```
+
+URL backend:
+
+- API: `http://127.0.0.1:8000`
+- Swagger: `http://127.0.0.1:8000/docs`
 
 ## Konfigurasi .env Backend
 
-File `backend/.env.example` adalah template. Salin menjadi `backend/.env`, lalu sesuaikan nilainya untuk komputer lokal.
+File `backend/.env.example` adalah template. Salin file tersebut menjadi `backend/.env`.
 
-Contoh `.env` backend:
+Contoh konfigurasi:
 
 ```env
 APP_NAME=Sinagar DietCare API
@@ -242,50 +376,20 @@ DEFAULT_ADMIN_EMAIL=admin@sinagar.local
 DEFAULT_ADMIN_PASSWORD=admin123
 ```
 
-Keterangan:
+Penjelasan variabel penting:
 
-- `DATABASE_URL` di atas cocok untuk XAMPP default dengan user `root` tanpa password.
-- `DEFAULT_ADMIN_PASSWORD` adalah password login aplikasi, bukan password MySQL.
-- `SECRET_KEY` sebaiknya diganti untuk environment production.
-- Jangan commit file `.env` jika project memakai Git.
+- `DATABASE_URL`: koneksi database MySQL. Contoh di atas cocok untuk XAMPP root tanpa password.
+- `SECRET_KEY`: kunci JWT. Ganti untuk environment production.
+- `ALGORITHM`: algoritma JWT, default `HS256`.
+- `ACCESS_TOKEN_EXPIRE_MINUTES`: durasi token login.
+- `MODEL_PATH`: lokasi file model Naive Bayes final.
+- `MODEL_METADATA_PATH`: lokasi metadata model final.
+- `BACKEND_CORS_ORIGINS`: daftar origin frontend yang diizinkan.
+- `DEFAULT_ADMIN_NAME`: nama admin development.
+- `DEFAULT_ADMIN_EMAIL`: email admin development.
+- `DEFAULT_ADMIN_PASSWORD`: password login admin development, bukan password MySQL.
 
-## Menjalankan Backend
-
-Pastikan virtual environment aktif dan posisi terminal berada di folder `backend`.
-
-Jalankan backend:
-
-```bash
-python -m uvicorn app.main:app --reload
-```
-
-Atau jika ingin langsung memakai Python dari venv Windows:
-
-```bash
-.\venv\Scripts\python.exe -m uvicorn app.main:app --reload
-```
-
-URL backend:
-
-- API: `http://127.0.0.1:8000`
-- Swagger: `http://127.0.0.1:8000/docs`
-
-Saat backend berjalan, aplikasi akan melakukan inisialisasi database dan membuat admin default jika environment development mengaktifkan konfigurasi admin default.
-
-## Login Admin Default
-
-Akun demo development:
-
-```text
-Email: admin@sinagar.local
-Password: admin123
-```
-
-Admin default dibuat saat `APP_ENV=development`, `DEFAULT_ADMIN_EMAIL` dan `DEFAULT_ADMIN_PASSWORD` tersedia, dan user admin belum ada di database.
-
-Jika admin sudah pernah dibuat dengan password lama, ubah password di database atau hapus user admin tersebut lalu restart backend agar admin default dibuat ulang.
-
-## Setup Frontend
+## Instalasi Frontend
 
 Masuk ke folder frontend:
 
@@ -299,8 +403,6 @@ Install dependency:
 npm install
 ```
 
-## Konfigurasi .env Frontend
-
 Buat file `frontend/.env` berdasarkan `frontend/.env.example`.
 
 Isi minimal:
@@ -308,10 +410,6 @@ Isi minimal:
 ```env
 VITE_API_BASE_URL=http://127.0.0.1:8000
 ```
-
-Pastikan URL tersebut sama dengan backend yang sedang berjalan.
-
-## Menjalankan Frontend
 
 Jalankan frontend:
 
@@ -325,32 +423,160 @@ URL default Vite:
 http://localhost:5173
 ```
 
-Buka URL tersebut di browser, lalu masuk menggunakan akun admin development.
+## File Model Final
 
-## Alur Menjalankan Project dari Awal
+File model final harus berada di:
 
-1. Jalankan XAMPP.
-2. Start MySQL.
-3. Buat database `sinagar_dietcare`.
-4. Masuk folder `backend`.
-5. Buat dan aktifkan virtual environment.
-6. Install dependency backend.
-7. Buat file `backend/.env`.
-8. Jalankan backend dengan Uvicorn.
-9. Buka Swagger untuk memastikan API aktif.
-10. Masuk folder `frontend`.
-11. Install dependency frontend.
-12. Buat file `frontend/.env`.
-13. Jalankan frontend dengan Vite.
-14. Login sebagai admin.
-15. Input data penduduk atau import Excel.
-16. Jalankan klasifikasi.
-17. Lihat laporan dan riwayat klasifikasi.
-18. Cetak PDF detail laporan jika diperlukan.
+```text
+backend/ml_models/naive_bayes_obesity_model_final.pkl
+backend/ml_models/model_metadata_final.json
+```
+
+Metadata model final berisi `input_features`:
+
+```json
+[
+  "Gender",
+  "Age",
+  "Height",
+  "Weight",
+  "BMI_Category"
+]
+```
+
+Metadata juga menyimpan aturan pembentukan `BMI_Category`:
+
+```json
+{
+  "BMI_Underweight": "BMI < 18.5",
+  "BMI_Normal": "18.5 <= BMI < 25",
+  "BMI_Overweight": "25 <= BMI < 30",
+  "BMI_Obesity": "BMI >= 30"
+}
+```
+
+Jika model diganti, metadata juga harus disesuaikan. Backend harus tetap membentuk fitur sesuai metadata model.
+
+## Cara Penggunaan Sistem
+
+1. Jalankan database MySQL.
+2. Jalankan backend.
+3. Jalankan frontend.
+4. Buka frontend di browser.
+5. Login sebagai admin.
+6. Tambah data penduduk secara manual atau import Excel.
+7. Jalankan klasifikasi status obesitas.
+8. Lihat hasil klasifikasi.
+9. Lihat rekomendasi diet dan jadwal makan.
+10. Buka laporan atau riwayat klasifikasi.
+11. Cetak PDF laporan jika dibutuhkan.
+
+## Akun Admin Development
+
+Contoh akun development:
+
+```text
+Email: admin@sinagar.local
+Password: admin123
+```
+
+Jika login gagal, cek nilai `DEFAULT_ADMIN_EMAIL` dan `DEFAULT_ADMIN_PASSWORD` pada `backend/.env`.
+
+## Import Excel
+
+Sistem menyediakan template Excel untuk import data penduduk.
+
+Alur import:
+
+1. Admin membuka halaman Data Penduduk.
+2. Admin klik `Download Template`.
+3. Admin mengisi template sesuai format yang tersedia.
+4. Admin upload file Excel.
+5. Sistem melakukan preview dan validasi data.
+6. Data valid dapat disimpan.
+7. Sistem dapat menjalankan klasifikasi massal.
+8. Data masuk ke Data Penduduk.
+9. Hasil klasifikasi masuk ke Laporan dan Riwayat Klasifikasi.
+
+Catatan:
+
+- File harus mengikuti template resmi dari sistem.
+- Data valid akan disimpan dan dapat diklasifikasikan.
+- Data tidak valid harus diperbaiki terlebih dahulu.
+- BMI tidak perlu diisi.
+- Import Excel bukan fitur upload dataset training dan tidak melakukan retraining model.
+
+## Output Sistem
+
+Output utama dan output tambahan yang dapat muncul dari proses klasifikasi dan rekomendasi:
+
+- `predicted_class`
+- `bmi`
+- `bmi_category`
+- `probabilities`
+- `diet_pattern`
+- `early_warning`
+- `goal`
+- `recommendation_summary`
+- `main_recommendations`
+- `meal_schedule`
+- `additional_notes`
+- `method`
+- `source_basis`
+- `source_references`
+- `model_version`
+
+Keterangan ringkas:
+
+- `predicted_class`: hasil klasifikasi dari model Naive Bayes.
+- `bmi`: nilai BMI hasil perhitungan backend.
+- `bmi_category`: kategori BMI yang menjadi fitur input model.
+- `probabilities`: probabilitas kelas dari model jika tersedia.
+- `diet_pattern`: pola diet yang direkomendasikan.
+- `early_warning`: status peringatan dini.
+- `goal`: tujuan rekomendasi.
+- `recommendation_summary`: ringkasan rekomendasi.
+- `main_recommendations`: daftar rekomendasi utama.
+- `meal_schedule`: jadwal makan.
+- `additional_notes`: catatan sistem.
+- `method`: metode rekomendasi yang digunakan.
+- `source_basis`: dasar sumber rekomendasi.
+- `source_references`: detail sumber rekomendasi jika tersedia.
+- `model_version`: versi model atau metadata model jika dikirim oleh backend.
+
+## Laporan dan Riwayat Klasifikasi
+
+### Laporan
+
+Laporan menampilkan hasil klasifikasi terakhir dari setiap penduduk. Jika satu penduduk diklasifikasi beberapa kali, halaman laporan hanya menampilkan hasil terbaru.
+
+### Riwayat Klasifikasi
+
+Riwayat Klasifikasi menampilkan semua proses klasifikasi yang pernah dilakukan. Jika satu penduduk diklasifikasi beberapa kali, semua proses tersebut tetap tampil sebagai riwayat.
+
+## Cetak PDF Laporan
+
+Detail laporan memiliki tombol `Cetak PDF`.
+
+PDF dibuat oleh backend menggunakan ReportLab. PDF dapat berisi:
+
+- Identitas penduduk.
+- Hasil klasifikasi.
+- BMI dan kategori BMI.
+- Pola diet.
+- Rekomendasi utama.
+- Jadwal makan.
+- Peringatan dini.
+- Catatan sistem.
+- Metode rekomendasi.
+- Dasar rekomendasi.
+- Nomor halaman.
+
+PDF mendukung multipage sehingga isi laporan yang panjang tidak hanya dicetak pada halaman pertama.
 
 ## Endpoint Backend Utama
 
-Sebagian besar endpoint selain login memerlukan Bearer token.
+Sebagian besar endpoint membutuhkan Bearer token setelah login.
 
 ### Auth
 
@@ -373,6 +599,12 @@ Sebagian besar endpoint selain login memerlukan Bearer token.
 - `PUT /api/residents/{resident_id}`
 - `DELETE /api/residents/{resident_id}`
 
+### Import Excel
+
+- `GET /api/residents/import-template`
+- `POST /api/residents/import-preview`
+- `POST /api/residents/import-classify`
+
 ### Prediction
 
 - `POST /api/predictions/predict`
@@ -385,213 +617,151 @@ Sebagian besar endpoint selain login memerlukan Bearer token.
 - `GET /api/reports/{classification_id}`
 - `GET /api/reports/{classification_id}/pdf`
 
-### Import Excel
+## Catatan Rekomendasi
 
-- `GET /api/residents/import-template`
-- `POST /api/residents/import-preview`
-- `POST /api/residents/import-classify`
+Hasil sistem bersifat informasi awal dan alat bantu. Rekomendasi sistem tidak menggantikan saran dokter, ahli gizi, atau tenaga kesehatan.
 
-## Penjelasan Import Excel
-
-Fitur import Excel dibuat untuk mempercepat input data penduduk dan mendukung klasifikasi massal.
-
-Alur import Excel:
-
-1. Admin klik `Download Template`.
-2. Sistem mengunduh template Excel resmi.
-3. Petugas mengisi sheet `Input_Penduduk`.
-4. Admin upload file `.xlsx`.
-5. Sistem melakukan preview dan validasi data.
-6. Data valid bisa disimpan dan diklasifikasikan massal.
-7. Hasil import masuk ke Data Penduduk.
-8. Hasil klasifikasi masuk ke Laporan dan Riwayat Klasifikasi.
-
-Catatan:
-
-- BMI tidak perlu diisi.
-- Jangan mengubah nama kolom template.
-- Gunakan pilihan data sesuai template agar validasi backend berhasil.
-- Import ini bukan upload dataset training dan tidak melakukan retraining model.
-
-## Struktur Kolom Excel
-
-Kolom template Excel:
-
-- Nama Penduduk
-- Jenis Kelamin
-- Usia
-- Tinggi Badan (cm)
-- Berat Badan (kg)
-- Riwayat Keluarga Obesitas
-- Konsumsi Makanan Tinggi Kalori / Fast Food
-- Frekuensi Konsumsi Sayur
-- Jumlah Makan Utama
-- Kebiasaan Makan di Antara Waktu Makan
-- Merokok
-- Konsumsi Air Harian
-- Kebiasaan Mengontrol Kalori
-- Frekuensi Aktivitas Fisik
-- Durasi Penggunaan Perangkat Teknologi
-- Konsumsi Alkohol
-- Jenis Transportasi Harian
-
-## Penjelasan Field Data Penduduk
-
-| Field | Keterangan | Contoh input |
-| --- | --- | --- |
-| Nama Penduduk | Nama penduduk yang didata | Adit |
-| Jenis Kelamin | Jenis kelamin penduduk | Laki-laki / Perempuan |
-| Usia | Usia dalam tahun | 28 |
-| Tinggi Badan | Tinggi badan, umumnya diisi dalam cm di UI/Excel | 165 |
-| Berat Badan | Berat badan dalam kg | 60 |
-| Riwayat Keluarga Obesitas | Ada atau tidak riwayat keluarga dengan overweight/obesitas | Ya / Tidak |
-| Konsumsi Fast Food | Kebiasaan konsumsi makanan tinggi kalori atau fast food | Ya / Tidak |
-| Frekuensi Konsumsi Sayur | Tingkat kebiasaan konsumsi sayur | Jarang / Kadang-kadang / Sering |
-| Jumlah Makan Utama | Jumlah makan utama yang biasa dilakukan | 1 kali / 2 kali / 3 kali / Lebih dari 3 kali |
-| Makanan di Antara Waktu Makan | Kebiasaan makan di antara waktu makan utama | Tidak / Kadang-kadang / Sering / Selalu |
-| Merokok | Status kebiasaan merokok | Ya / Tidak |
-| Konsumsi Air Harian | Tingkat konsumsi air harian | Rendah / Sedang / Tinggi |
-| Mengontrol Kalori | Kebiasaan mengontrol kalori | Ya / Tidak |
-| Aktivitas Fisik | Tingkat kebiasaan aktivitas fisik | Tidak pernah / Rendah / Sedang / Tinggi |
-| Penggunaan Teknologi | Tingkat durasi penggunaan perangkat teknologi | Rendah / Sedang / Tinggi |
-| Konsumsi Alkohol | Kebiasaan konsumsi alkohol | Tidak / Kadang-kadang / Sering / Selalu |
-| Jenis Transportasi | Transportasi harian | Mobil / Motor / Sepeda / Transportasi Umum / Jalan Kaki |
-
-Nama field API tetap mengikuti kebutuhan backend dan model, misalnya `gender`, `age`, `height`, `weight`, `fcvc`, `ncp`, `ch2o`, `faf`, `tue`, dan field lain yang dipakai model.
-
-## Laporan dan Riwayat Klasifikasi
-
-Ada dua halaman utama untuk hasil klasifikasi:
-
-### Laporan Klasifikasi
-
-Laporan menampilkan hasil klasifikasi terakhir dari setiap penduduk. Jika satu penduduk diklasifikasi berkali-kali, yang tampil di halaman Laporan hanya hasil terbaru.
-
-Tujuannya agar admin bisa melihat ringkasan kondisi terakhir setiap penduduk tanpa duplikasi.
-
-### Riwayat Klasifikasi
-
-Riwayat Klasifikasi menampilkan semua proses klasifikasi yang pernah dilakukan. Jika satu penduduk diklasifikasi lima kali, maka riwayat akan menampilkan lima baris untuk penduduk tersebut.
-
-Tujuannya agar admin bisa melihat perjalanan atau catatan proses klasifikasi dari waktu ke waktu.
-
-## Cetak PDF Laporan
-
-Detail laporan memiliki tombol `Cetak PDF`.
-
-Ketika tombol ditekan:
-
-1. Frontend memanggil endpoint backend.
-2. Backend mengambil data detail laporan berdasarkan `classification_id`.
-3. Backend membuat PDF menggunakan ReportLab.
-4. File PDF dikirim ke browser untuk diunduh.
-
-PDF laporan memuat:
-
-- Header laporan.
-- Identitas penduduk.
-- Hasil klasifikasi.
-- BMI.
-- Pola diet.
-- Tujuan rekomendasi.
-- Rekomendasi utama.
-- Jadwal makan.
-- Probabilitas klasifikasi.
-- Catatan sistem.
-- Metode rekomendasi.
-- Dasar rekomendasi.
-- Footer catatan non-medis.
-- Nomor halaman.
-
-PDF dibuat di backend dan mendukung multipage, sehingga konten panjang dapat lanjut ke halaman berikutnya.
+Sistem tidak boleh dipahami sebagai alat diagnosis medis. Keputusan lebih lanjut tetap perlu mempertimbangkan arahan tenaga kesehatan yang berwenang.
 
 ## Troubleshooting
 
-### A. ModuleNotFoundError: No module named 'reportlab'
+### 1. ModuleNotFoundError
+
+Penyebab:
+
+- Dependency belum terinstall.
+- Virtual environment belum aktif.
 
 Solusi:
 
 ```bash
-pip install reportlab
-```
-
-Idealnya dependency ini sudah terpasang melalui:
-
-```bash
+cd backend
+.\venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### B. MySQL tidak terkoneksi
+Jika module tertentu masih belum ada, install sesuai pesan error. Contoh:
+
+```bash
+pip install reportlab
+pip install openpyxl
+```
+
+### 2. Backend tidak jalan karena venv belum aktif
 
 Solusi:
 
-- Pastikan MySQL XAMPP berjalan.
-- Pastikan database `sinagar_dietcare` sudah dibuat.
+```bash
+cd backend
+.\venv\Scripts\activate
+python -m uvicorn app.main:app --reload
+```
+
+### 3. Database belum dikonfigurasi
+
+Penyebab:
+
+- Database belum dibuat.
+- `DATABASE_URL` salah.
+- MySQL belum berjalan.
+
+Solusi:
+
+- Start MySQL di XAMPP.
+- Buat database `sinagar_dietcare`.
 - Cek `DATABASE_URL` pada `backend/.env`.
-- Jika MySQL memakai password, sesuaikan URL, misalnya:
 
-```env
-DATABASE_URL=mysql+pymysql://root:password@localhost:3306/sinagar_dietcare
-```
+### 4. Frontend tidak terhubung ke backend
 
-### C. Login gagal
+Penyebab:
 
-Solusi:
-
-- Cek `DEFAULT_ADMIN_EMAIL` dan `DEFAULT_ADMIN_PASSWORD`.
-- Pastikan backend sudah direstart setelah mengubah `.env`.
-- Jika admin sudah dibuat dengan password lama, hapus user admin di database lalu restart backend.
-
-### D. 401 Not authenticated
-
-Solusi:
-
-- Login terlebih dahulu dari frontend.
-- Jika memakai Swagger, klik tombol `Authorize`.
-- Masukkan token Bearer yang didapat dari login.
-- Pastikan request mengirim header:
-
-```text
-Authorization: Bearer <token>
-```
-
-### E. BMI menjadi 0 atau tidak sesuai
-
-Solusi:
-
-- Pastikan tinggi badan valid.
-- Jika input tinggi badan dalam cm, sistem harus menormalisasi ke meter.
-- Contoh: `160 cm` menjadi `1.60 m`.
-- Pastikan berat badan lebih dari 0.
-
-### F. Frontend tidak bisa konek API
+- Backend belum berjalan.
+- `VITE_API_BASE_URL` salah.
+- CORS belum sesuai.
 
 Solusi:
 
 - Pastikan backend berjalan di `http://127.0.0.1:8000`.
 - Cek `frontend/.env`.
-- Pastikan isinya:
+- Cek `BACKEND_CORS_ORIGINS` pada backend.
 
-```env
-VITE_API_BASE_URL=http://127.0.0.1:8000
-```
+### 5. Model .pkl tidak ditemukan
 
-- Cek konfigurasi CORS backend:
+Penyebab:
 
-```env
-BACKEND_CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-```
-
-### G. Import Excel gagal
+- File model tidak ada di `backend/ml_models/`.
+- `MODEL_PATH` salah.
 
 Solusi:
 
-- Gunakan template resmi dari sistem.
-- Isi sheet `Input_Penduduk`.
-- Jangan ubah nama kolom.
-- Pastikan file berformat `.xlsx`.
-- Cek value dropdown pada template.
-- Jalankan preview terlebih dahulu untuk melihat data valid dan data bermasalah.
+- Pastikan file berikut tersedia:
+
+```text
+backend/ml_models/naive_bayes_obesity_model_final.pkl
+```
+
+- Cek `MODEL_PATH` pada `.env`.
+
+### 6. Metadata model tidak ditemukan
+
+Penyebab:
+
+- File metadata tidak ada.
+- `MODEL_METADATA_PATH` salah.
+
+Solusi:
+
+- Pastikan file berikut tersedia:
+
+```text
+backend/ml_models/model_metadata_final.json
+```
+
+- Cek `MODEL_METADATA_PATH` pada `.env`.
+
+### 7. Error missing BMI_Category
+
+Penyebab:
+
+- Backend belum membentuk `BMI_Category`.
+- Metadata model meminta `BMI_Category`, tetapi data input model belum memiliki field tersebut.
+
+Solusi:
+
+- Pastikan backend menghitung BMI.
+- Pastikan backend membentuk `BMI_Category` sesuai aturan metadata.
+- Jangan mengganti model tanpa menyesuaikan metadata dan proses feature engineering.
+
+### 8. Port database berbeda
+
+Penyebab:
+
+- MySQL tidak berjalan pada port default `3306`.
+
+Solusi:
+
+- Cek port MySQL di XAMPP.
+- Sesuaikan `DATABASE_URL`.
+
+Contoh jika MySQL berjalan pada port `3307`:
+
+```env
+DATABASE_URL=mysql+pymysql://root:@localhost:3307/sinagar_dietcare
+```
+
+### 9. node_modules belum diinstall
+
+Penyebab:
+
+- Dependency frontend belum dipasang.
+
+Solusi:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 ## Build Production
 
@@ -600,16 +770,18 @@ Solusi:
 Backend dapat dijalankan dengan Uvicorn:
 
 ```bash
+cd backend
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-Untuk production, gunakan konfigurasi server ASGI yang sesuai environment. Pastikan juga mengganti `SECRET_KEY`, memakai database production, dan mengatur CORS dengan origin yang benar.
+Untuk deployment production, sesuaikan konfigurasi server, database, CORS, dan `SECRET_KEY`.
 
 ### Frontend
 
 Build frontend:
 
 ```bash
+cd frontend
 npm run build
 ```
 
@@ -619,7 +791,7 @@ Preview hasil build:
 npm run preview
 ```
 
-Folder hasil build berada di:
+Hasil build berada di:
 
 ```text
 frontend/dist
@@ -627,54 +799,49 @@ frontend/dist
 
 ## Testing Manual
 
-Checklist pengujian manual:
+Checklist pengujian:
 
-- Backend running.
-- Swagger terbuka.
-- Login berhasil.
-- Token tersimpan.
+- Backend berjalan.
+- Swagger dapat dibuka.
+- Database terkoneksi.
+- Login admin berhasil.
 - Dashboard tampil.
 - Data penduduk tampil.
-- Tambah data berhasil.
-- Edit data berhasil.
-- Hapus data berhasil.
-- Detail penduduk tampil.
-- Klasifikasi berhasil.
-- Rekomendasi diet tampil.
+- Tambah data penduduk berhasil.
+- Edit data penduduk berhasil.
+- Hapus data penduduk berhasil.
+- Import Excel berhasil melakukan preview.
+- Import Excel berhasil menyimpan data valid.
+- Klasifikasi status obesitas berhasil.
+- `predicted_class` berasal dari model Naive Bayes.
+- Rekomendasi pola diet tampil.
 - Jadwal makan tampil.
-- Sumber rekomendasi tampil.
-- Import Excel preview berhasil.
-- Import dan klasifikasi massal berhasil.
-- Laporan latest tampil.
-- Riwayat klasifikasi tampil.
+- Peringatan dini tampil.
+- Dasar rekomendasi tampil.
+- Laporan menampilkan hasil terakhir setiap penduduk.
+- Riwayat klasifikasi menampilkan seluruh proses klasifikasi.
 - Detail laporan tampil.
-- Cetak PDF berhasil.
+- Cetak PDF laporan berhasil.
 - Frontend build berhasil.
 
-## Akun Demo
+## Catatan untuk Developer atau Client
 
-Akun admin development:
-
-```text
-Email: admin@sinagar.local
-Password: admin123
-```
-
-Jika akun tersebut tidak bisa digunakan, cek konfigurasi `.env` backend dan data pada tabel `users`.
-
-## Catatan Development
-
-- Jangan commit `.env` jika memakai Git.
-- Gunakan `.env.example` sebagai template konfigurasi.
-- Jangan mengubah model `.pkl` tanpa proses training ulang yang jelas.
-- Jangan menghapus field model karena backend dan frontend bergantung pada model final.
+- Jangan menghapus folder `backend/ml_models/`.
+- Jangan mengganti file model tanpa menyesuaikan metadata.
+- Jangan mengubah `MODEL_PATH` dan `MODEL_METADATA_PATH` tanpa memastikan file ada.
+- Jika model diganti, backend harus tetap membuat `BMI_Category` sesuai metadata.
+- `BMI_Category` adalah fitur input model, bukan aturan manual untuk menentukan hasil akhir.
+- Atribut pola makan dan aktivitas tetap dibutuhkan untuk rekomendasi meskipun tidak masuk fitur utama Naive Bayes.
+- Jangan menghapus field input rekomendasi seperti `FAVC`, `FCVC`, `NCP`, `CAEC`, `CH2O`, `FAF`, `TUE`, `CALC`, dan `MTRANS`.
 - Jangan meminta admin mengisi BMI manual.
-- Jangan menambahkan fitur di luar scope skripsi seperti registrasi publik, konsultasi dokter, payment, marketplace, atau fitur diet komersial.
-- Jika mengubah endpoint backend, pastikan service frontend ikut diperbarui.
-- Jika mengubah struktur response, pastikan halaman hasil klasifikasi dan laporan tetap memiliki fallback untuk data lama.
+- Jangan commit file `.env` jika project memakai Git.
+- Gunakan `.env.example` sebagai template konfigurasi.
 
-## Lisensi dan Catatan Akademik
+## Catatan Akademik
 
-Project Sinagar DietCare dibuat untuk kebutuhan akademik/skripsi. Penggunaan, pengembangan, atau publikasi ulang project mengikuti kebutuhan akademik dan ketentuan pemilik project.
+Project ini dibuat untuk kebutuhan akademik/skripsi. Sistem berfokus pada klasifikasi status obesitas, rekomendasi pola diet awal, jadwal makan, peringatan dini, laporan, riwayat klasifikasi, import Excel, dan cetak PDF laporan.
 
-Sistem ini ditujukan sebagai alat bantu pengelolaan data, klasifikasi status obesitas, rekomendasi pola diet awal, dan peringatan dini dalam konteks studi kasus Kampung Sinagar.
+Pembagian metode final:
+
+- Naive Bayes = klasifikasi status obesitas.
+- Rule-Based Recommendation / Forward Chaining = rekomendasi diet, jadwal makan, peringatan dini, catatan, dan dasar rekomendasi.
