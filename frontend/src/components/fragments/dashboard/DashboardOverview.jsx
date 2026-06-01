@@ -87,15 +87,6 @@ export default function DashboardOverview() {
   if (isLoading) {
     return (
       <section className="space-y-8">
-        <div>
-          <h1 className="mb-2 text-3xl font-bold leading-10 text-[#3a6936]">
-            Dashboard Sinagar DietCare
-          </h1>
-          <p className="max-w-3xl text-lg leading-7 text-[#52637f]">
-            Pantau data penduduk, hasil klasifikasi status obesitas, rekomendasi
-            pola diet, dan status peringatan dini masyarakat Kampung Sinagar.
-          </p>
-        </div>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
           <div className="space-y-6 lg:col-span-8">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -128,16 +119,6 @@ export default function DashboardOverview() {
 
   return (
     <section>
-      <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold leading-10 text-[#3a6936]">
-          Dashboard Sinagar DietCare
-        </h1>
-        <p className="max-w-3xl text-lg leading-7 text-[#52637f]">
-          Pantau data penduduk, hasil klasifikasi status obesitas, rekomendasi
-          pola diet, dan status peringatan dini masyarakat Kampung Sinagar.
-        </p>
-      </div>
-
       <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-12">
         <div className="flex flex-col gap-8 lg:col-span-8">
           <DashboardStats summary={summary} />

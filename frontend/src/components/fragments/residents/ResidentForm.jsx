@@ -236,18 +236,8 @@ export default function ResidentForm({ mode = "create" }) {
     return <FormSkeleton fields={Object.keys(initialValues).length} />;
   }
 
-  const title = isEdit ? "Edit Penduduk" : "Tambah Penduduk";
-  const description = isEdit
-    ? "Perbarui data penduduk sesuai atribut yang digunakan model."
-    : "Isi data penduduk sesuai atribut yang digunakan model. BMI dihitung otomatis oleh backend.";
-
   return (
     <section className="space-y-5">
-      <div>
-        <h1 className="text-2xl font-semibold text-slate-950">{title}</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
-      </div>
-
       {errorMessage ? (
         <Alert
           variant="danger"

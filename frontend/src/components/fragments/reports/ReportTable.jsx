@@ -14,6 +14,10 @@ import CardSkeleton from "../../elements/loading/CardSkeleton";
 import TableSkeleton from "../../elements/loading/TableSkeleton";
 import EmptyState from "../../elements/tables/EmptyState";
 import { ROUTES } from "../../../constants/routes";
+import {
+  PAGE_TABLE_PANEL_CLASS,
+  PAGE_TABLE_SECTION_CLASS,
+} from "../../../constants/tableLayout";
 import reportService from "../../../services/reportService";
 import { formatDateTime, formatNumber } from "../../../utils/formatters";
 import { showError } from "../../../utils/toast";
@@ -202,38 +206,19 @@ export default function ReportTable() {
   if (isLoading) {
     return (
       <section className="space-y-6">
-        <div>
-          <h1 className="mb-2 text-4xl font-bold leading-10 text-[#1a1a1a]">
-            Laporan Klasifikasi
-          </h1>
-          <p className="max-w-3xl text-lg leading-7 text-[#52637f]">
-            Ringkasan hasil klasifikasi terakhir setiap penduduk sebagai
-            informasi awal dan alat bantu.
-          </p>
-        </div>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <CardSkeleton rows={1} />
           <CardSkeleton rows={1} />
           <CardSkeleton rows={1} />
           <CardSkeleton rows={1} />
         </div>
-        <TableSkeleton columns={7} rows={8} />
+        <TableSkeleton columns={7} rows={8} className="min-h-[520px]" />
       </section>
     );
   }
 
   return (
-    <section className="flex h-[calc(200vh-11rem)]  md:h-[calc(130vh-11rem)]  min-h-0 flex-col overflow-hidden">
-      <div className="mb-6 shrink-0">
-        <h1 className="mb-2 text-4xl font-bold leading-10 text-[#1a1a1a]">
-          Laporan Klasifikasi
-        </h1>
-        <p className="max-w-3xl text-lg leading-7 text-[#52637f]">
-          Ringkasan hasil klasifikasi terakhir setiap penduduk sebagai informasi
-          awal dan alat bantu.
-        </p>
-      </div>
-
+    <section className={PAGE_TABLE_SECTION_CLASS}>
       {errorMessage ? (
         <Alert
           variant="danger"
@@ -270,7 +255,12 @@ export default function ReportTable() {
         </div>
       ) : null}
 
-      <div className="flex min-h-0 flex-1 flex-col rounded-xl bg-white p-6 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+      <div
+        className={[
+          PAGE_TABLE_PANEL_CLASS,
+          "rounded-xl bg-white p-6 shadow-[0_4px_20px_rgba(0,0,0,0.05)]",
+        ].join(" ")}
+      >
         <div className="mb-4 shrink-0 border-b border-[#e7e8e9] pb-4">
           <h2 className="text-xl font-semibold leading-7 text-[#1a1a1a]">
             Hasil Klasifikasi Terakhir

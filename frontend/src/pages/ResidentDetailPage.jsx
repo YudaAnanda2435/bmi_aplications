@@ -50,15 +50,6 @@ export default function ResidentDetailPage() {
   if (isLoading) {
     return (
       <section className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-950">
-            Detail Penduduk
-          </h1>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            Tinjau data penduduk dan jalankan klasifikasi sebagai informasi
-            awal.
-          </p>
-        </div>
         <CardSkeleton rows={8} />
       </section>
     );
@@ -81,16 +72,7 @@ export default function ResidentDetailPage() {
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-950">
-            Detail Penduduk
-          </h1>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            Tinjau data penduduk dan jalankan klasifikasi sebagai informasi
-            awal.
-          </p>
-        </div>
+      <div className="flex justify-end">
         <Button as={Link} to={ROUTES.residents} variant="secondary">
           Kembali
         </Button>

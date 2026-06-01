@@ -19,6 +19,10 @@ import TableSkeleton from "../../elements/loading/TableSkeleton";
 import EmptyState from "../../elements/tables/EmptyState";
 import ResidentImportModal from "./ResidentImportModal";
 import { ROUTES } from "../../../constants/routes";
+import {
+  PAGE_TABLE_PANEL_CLASS,
+  PAGE_TABLE_SECTION_CLASS,
+} from "../../../constants/tableLayout";
 import { genderOptions } from "../../../constants/options";
 import importService from "../../../services/importService";
 import residentService from "../../../services/residentService";
@@ -192,32 +196,13 @@ export default function ResidentTable() {
   if (isLoading) {
     return (
       <section className="space-y-6">
-        <div>
-          <h1 className="mb-2 text-3xl font-bold leading-10 text-[#191c1d]">
-            Data Penduduk
-          </h1>
-          <p className="max-w-2xl text-base leading-6 text-[#64748b]">
-            Kelola data penduduk yang digunakan sebagai input dalam proses
-            klasifikasi status obesitas dan peringatan dini.
-          </p>
-        </div>
-        <TableSkeleton columns={7} rows={8} />
+        <TableSkeleton columns={7} rows={8} className="min-h-[520px]" />
       </section>
     );
   }
 
   return (
-    <section className="flex h-[calc(130vh-7rem)] md:h-[calc(100vh-7rem)] min-h-0 flex-col overflow-hidden">
-      <div className="mb-8 shrink-0">
-        <h1 className="mb-2 text-3xl font-bold leading-10 text-[#191c1d]">
-          Data Penduduk
-        </h1>
-        <p className="max-w-2xl text-base leading-6 text-[#64748b]">
-          Kelola data penduduk yang digunakan sebagai input dalam proses
-          klasifikasi status obesitas dan peringatan dini.
-        </p>
-      </div>
-
+    <section className={PAGE_TABLE_SECTION_CLASS}>
       <div className="mb-4 flex shrink-0 flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div className="relative w-full sm:w-80">
           <Search
@@ -272,7 +257,12 @@ export default function ResidentTable() {
         />
       ) : null}
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-[#e1e3e4]/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+      <div
+        className={[
+          PAGE_TABLE_PANEL_CLASS,
+          "rounded-xl border border-[#e1e3e4]/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]",
+        ].join(" ")}
+      >
         {filteredResidents.length ? (
           <>
             <div className="min-h-0 w-full flex-1 overflow-auto">

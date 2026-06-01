@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowRight, LockKeyhole, Mail } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 import Button from "../../elements/buttons/Button";
 import ActionLoadingModal from "../../elements/feedback/ActionLoadingModal";
 import FormError from "../../elements/forms/FormError";
@@ -20,6 +20,7 @@ export default function LoginForm() {
   });
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     setFormData({
@@ -82,14 +83,29 @@ export default function LoginForm() {
               id="password"
               name="password"
               label="Kata Sandi"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Masukkan kata sandi admin"
               autoComplete="new-password"
               value={formData.password}
               onChange={handleChange}
-              className="h-12 rounded-xl border-[#d9dadb] pl-12 focus:border-[#3a6936] focus:ring-[#d4e8d5]"
+              className="h-12 rounded-xl border-[#d9dadb] pl-12 pr-12 focus:border-[#3a6936] focus:ring-[#d4e8d5]"
               required
             />
+            <button
+              type="button"
+              aria-label={
+                showPassword ? "Sembunyikan kata sandi" : "Lihat kata sandi"
+              }
+              aria-pressed={showPassword}
+              onClick={() => setShowPassword((current) => !current)}
+              className="absolute right-4 top-[43px] inline-flex h-5 w-5 items-center justify-center text-[#64748b] transition hover:text-[#3a6936]"
+            >
+              {showPassword ? (
+                <EyeOff aria-hidden="true" className="h-5 w-5" />
+              ) : (
+                <Eye aria-hidden="true" className="h-5 w-5" />
+              )}
+            </button>
           </div>
         </div>
 

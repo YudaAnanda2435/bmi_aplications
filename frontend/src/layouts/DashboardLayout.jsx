@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
-  Bell,
   CircleHelp,
-  ClipboardList,
   FileText,
   Grid3X3,
   History,
   LogOut,
   Menu,
   Plus,
-  Search,
   Sparkles,
-  Settings,
   ShieldPlus,
   UsersRound,
   X,
@@ -30,11 +26,168 @@ const navIcons = {
   [ROUTES.classificationHistory]: History,
 };
 
+function getPageHeader(pathname) {
+  if (pathname === ROUTES.dashboard) {
+    return {
+      title: "Dashboard Sinagar DietCare",
+      description:
+        "Pantau data penduduk, hasil klasifikasi, rekomendasi pola diet, dan peringatan dini.",
+    };
+  }
+
+  if (pathname === ROUTES.residents) {
+    return {
+      title: "Data Penduduk",
+      description:
+        "Kelola data penduduk yang digunakan sebagai input klasifikasi status obesitas.",
+    };
+  }
+
+  if (pathname === ROUTES.residentCreate) {
+    return {
+      title: "Tambah Penduduk",
+      description:
+        "Isi data penduduk; BMI dihitung otomatis oleh backend.",
+    };
+  }
+
+  if (/^\/residents\/[^/]+\/edit$/.test(pathname)) {
+    return {
+      title: "Edit Penduduk",
+      description:
+        "Perbarui data penduduk sesuai atribut sistem.",
+    };
+  }
+
+  if (/^\/residents\/[^/]+$/.test(pathname)) {
+    return {
+      title: "Detail Penduduk",
+      description:
+        "Tinjau data penduduk dan jalankan klasifikasi sebagai informasi awal.",
+    };
+  }
+
+  if (pathname === ROUTES.reports) {
+    return {
+      title: "Laporan Klasifikasi",
+      description:
+        "Ringkasan hasil klasifikasi terakhir setiap penduduk.",
+    };
+  }
+
+  if (pathname === ROUTES.classificationHistory) {
+    return {
+      title: "Riwayat Klasifikasi",
+      description:
+        "Daftar seluruh proses klasifikasi yang pernah dilakukan.",
+    };
+  }
+
+  if (/^\/reports\/[^/]+$/.test(pathname)) {
+    return {
+      title: "Detail Laporan",
+      description:
+        "Ringkasan hasil klasifikasi sebagai informasi awal.",
+    };
+  }
+
+  return {
+    title: "Sinagar DietCare",
+    description: "Sistem klasifikasi status obesitas dan rekomendasi pola diet.",
+  };
+}
+
+function HeaderHelpButton({ className = "", onClick }) {
+  return (
+    <button
+      type="button"
+      aria-label="Buka bantuan"
+      onClick={onClick}
+      className={[
+        "inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-[#d4e8d5] bg-white px-3 py-2 text-sm font-bold text-[#3a6936] shadow-sm transition hover:bg-[#edf6ea]",
+        className,
+      ].join(" ")}
+    >
+      <CircleHelp aria-hidden="true" className="h-5 w-5" />
+      <span className="hidden sm:inline">Bantuan</span>
+    </button>
+  );
+}
+
+function HelpDialog({ open, onClose }) {
+  if (!open) {
+    return null;
+  }
+
+  const guideItems = [
+    "Kelola data penduduk melalui menu Data Penduduk.",
+    "Isi tinggi badan dan berat badan; BMI dihitung otomatis oleh backend.",
+    "Gunakan tombol klasifikasi pada detail penduduk untuk melihat status, rekomendasi pola diet, dan peringatan dini.",
+    "Buka menu Laporan untuk melihat hasil klasifikasi terakhir dan riwayat proses klasifikasi.",
+  ];
+
+  return (
+    <div
+      className="fixed inset-0 z-[65] flex items-center justify-center bg-[#0f1f14]/40 px-4 backdrop-blur-[2px]"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="help-dialog-title"
+    >
+      <div className="w-full max-w-lg rounded-2xl border border-[#e1e3e4] bg-white p-6 shadow-[0_24px_80px_rgba(15,31,20,0.22)]">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2
+              id="help-dialog-title"
+              className="text-lg font-bold text-[#191c1d]"
+            >
+              Bantuan Penggunaan
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-[#64748b]">
+              Panduan singkat untuk admin atau petugas desa saat menggunakan
+              Sinagar DietCare.
+            </p>
+          </div>
+          <button
+            type="button"
+            aria-label="Tutup bantuan"
+            onClick={onClose}
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#64748b] transition hover:bg-[#edf6ea] hover:text-[#3a6936]"
+          >
+            <X aria-hidden="true" className="h-5 w-5" />
+          </button>
+        </div>
+
+        <ol className="mt-5 space-y-3">
+          {guideItems.map((item, index) => (
+            <li
+              key={item}
+              className="flex gap-3 rounded-xl bg-[#f8f9fa] px-4 py-3 text-sm leading-6 text-[#334155]"
+            >
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#3a6936] text-xs font-bold text-white">
+                {index + 1}
+              </span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ol>
+
+        <p className="mt-5 rounded-xl border border-[#d4e8d5] bg-[#edf6ea] px-4 py-3 text-sm leading-6 text-[#3a6936]">
+          Hasil klasifikasi adalah informasi awal dan alat bantu. Rekomendasi
+          tidak menggantikan saran tenaga kesehatan.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout } = useAuth();
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const pageHeader = getPageHeader(location.pathname);
 
   useEffect(() => {
     function handleEscape(event) {
@@ -70,9 +223,14 @@ export default function DashboardLayout() {
     setIsLogoutConfirmOpen(true);
   }
 
+  function handleHelpClick() {
+    setIsMobileMenuOpen(false);
+    setIsHelpOpen(true);
+  }
+
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-[#191c1d]">
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[240px] flex-col justify-between bg-[#0f1f14] px-4 py-8 text-[#bfc9bd] shadow-sm md:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[240px] flex-col justify-between bg-[#0f1f14] px-4 py-6 text-[#bfc9bd] shadow-sm md:flex">
         <div>
           <div className="mb-10 flex gap-2 flex-row items-center px-4 text-center">
             <Sparkles
@@ -125,6 +283,7 @@ export default function DashboardLayout() {
           <div className="space-y-2">
             <button
               type="button"
+              onClick={handleHelpClick}
               className="flex w-full items-center gap-3 rounded-full px-4 py-3 text-left text-sm font-bold text-[#bfc9bd] transition hover:bg-[#3f4940]/35 hover:text-[#bbf1b0]"
             >
               <CircleHelp aria-hidden="true" className="h-5 w-5" />
@@ -143,9 +302,9 @@ export default function DashboardLayout() {
       </aside>
 
       <div className="md:pl-[240px]">
-        <header className="sticky top-0 z-30 flex min-h-16 items-center justify-between bg-[#f8f9fa]/90 px-4 backdrop-blur md:px-8">
-          <div className="flex min-w-0 flex-1 items-center">
-            <div className="flex items-center gap-1 md:gap-2 md:hidden">
+        <header className="sticky top-0 z-30 bg-[#f8f9fa]/90 px-4 py-3 backdrop-blur md:flex md:min-h-20 md:items-center md:justify-between md:gap-4 md:px-8 md:py-0">
+          <div className="flex items-center justify-between gap-3 md:hidden">
+            <div className="flex min-w-0 items-center gap-1">
               <button
                 type="button"
                 aria-label="Buka menu navigasi"
@@ -164,39 +323,33 @@ export default function DashboardLayout() {
               </p>
             </div>
 
-            <div className="relative hidden w-full max-w-md md:block">
-              <Search
-                aria-hidden="true"
-                className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#42493f]"
-              />
-              <input
-                type="search"
-                placeholder="Search..."
-                className="h-10 w-full rounded-full border-none bg-[#f3f4f5] pl-11 pr-4 text-sm text-[#191c1d] outline-none ring-0 placeholder:text-[#64748b] focus:ring-2 focus:ring-[#3a6936]/15"
-              />
+            <HeaderHelpButton onClick={handleHelpClick} />
+          </div>
+
+          <div className="mt-3 min-w-0 border-t border-[#e0e8dd] pt-3 md:mt-0 md:flex md:flex-1 md:items-center md:border-0 md:pt-0">
+            <div className="hidden min-w-0 md:block">
+              <h1 className="truncate text-2xl font-bold leading-8 text-[#191c1d]">
+                {pageHeader.title}
+              </h1>
+              <p className="mt-0.5 max-w-3xl truncate text-sm leading-5 text-[#52637f]">
+                {pageHeader.description}
+              </p>
+            </div>
+
+            <div className="min-w-0 md:hidden">
+              <h1 className="truncate text-base font-bold leading-6 text-[#191c1d]">
+                {pageHeader.title}
+              </h1>
+              <p className="text-xs leading-4 text-[#52637f]">
+                {pageHeader.description}
+              </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1 md:gap-4 text-[#42493f]">
-            <button
-              type="button"
-              aria-label="Pemberitahuan"
-              className="relative rounded-full md:p-1.5 transition hover:text-[#3a6936]"
-            >
-              <Bell aria-hidden="true" className="h-5 w-5" />
-              <span className="absolute md:right-1.5 top-px md:top-1.5 h-2 w-2 rounded-full bg-[#f44336]" />
-            </button>
-            <button
-              type="button"
-              aria-label="Pengaturan"
-              className="rounded-full p-1.5 transition hover:text-[#3a6936]"
-            >
-              <Settings aria-hidden="true" className="h-5 w-5" />
-            </button>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-[#c2c9bc] bg-[#86b97d] text-white">
-              <ClipboardList aria-hidden="true" className="h-5 w-5" />
-            </div>
-          </div>
+          <HeaderHelpButton
+            className="hidden md:inline-flex"
+            onClick={handleHelpClick}
+          />
         </header>
 
         <main className="mx-auto max-w-[1440px] px-4 pb-20 pt-6 md:px-8 md:pt-8">
@@ -289,6 +442,7 @@ export default function DashboardLayout() {
             <div className="grid gap-2">
               <button
                 type="button"
+                onClick={handleHelpClick}
                 className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-bold text-[#dbe6d9] transition hover:bg-[#3f4940]/35 hover:text-[#bbf1b0]"
               >
                 <CircleHelp aria-hidden="true" className="h-5 w-5" />
@@ -313,10 +467,11 @@ export default function DashboardLayout() {
         message="Sesi admin akan diakhiri dan Anda perlu masuk kembali untuk mengakses dashboard."
         confirmText="Ya, Keluar"
         cancelText="Tetap di Sistem"
-        variant="danger"
-        onConfirm={handleLogout}
-        onCancel={() => setIsLogoutConfirmOpen(false)}
-      />
+          variant="danger"
+          onConfirm={handleLogout}
+          onCancel={() => setIsLogoutConfirmOpen(false)}
+        />
+      <HelpDialog open={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
     </div>
   );
 }

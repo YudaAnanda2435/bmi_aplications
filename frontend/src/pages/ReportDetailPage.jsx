@@ -74,14 +74,6 @@ export default function ReportDetailPage() {
   if (isLoading) {
     return (
       <section className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-950">
-            Detail Laporan
-          </h1>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            Ringkasan hasil klasifikasi sebagai informasi awal.
-          </p>
-        </div>
         <CardSkeleton rows={6} />
         <CardSkeleton rows={4} />
       </section>
@@ -105,16 +97,7 @@ export default function ReportDetailPage() {
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center print:hidden">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-950">
-            Detail Laporan
-          </h1>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            Ringkasan hasil klasifikasi sebagai informasi awal.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap justify-end gap-2 print:hidden">
           <Button as={Link} to={ROUTES.reports} variant="secondary">
             Kembali
           </Button>
@@ -125,7 +108,6 @@ export default function ReportDetailPage() {
           >
             Cetak PDF
           </Button>
-        </div>
       </div>
 
       <ReportDetail report={report} />

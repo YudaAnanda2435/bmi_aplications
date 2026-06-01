@@ -72,7 +72,7 @@ export default function LandingFooter() {
         </div>
         <div className="flex flex-col items-center justify-between gap-4 border-t border-emerald-800/50 pt-8 md:flex-row">
           <p className="text-sm font-medium text-emerald-200">
-            Â© 2026 Sinagar DietCare. Hak Cipta Dilindungi.
+            Copyright 2026 Sinagar DietCare. Hak Cipta Dilindungi.
           </p>
         </div>
       </div>
