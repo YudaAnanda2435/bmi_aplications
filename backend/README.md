@@ -51,6 +51,27 @@ python -m venv venv
 .\venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
+Daftar dependency yang akan di-install dari `requirements.txt`:
+
+```text
+fastapi
+uvicorn[standard]
+pydantic-settings
+python-dotenv
+sqlalchemy
+pymysql
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt
+joblib
+pandas
+numpy
+scikit-learn==1.6.1
+python-multipart
+openpyxl
+reportlab
+```
+
 ## Setup MySQL
 
 Buka XAMPP Control Panel, lalu jalankan service MySQL.
