@@ -97,7 +97,7 @@ app.include_router(reports_router, prefix="/api", dependencies=[Depends(get_curr
 def root() -> dict[str, object]:
     return {
         "success": True,
-        "message": "Welcome to Sinagar DietCare API",
+        "message": "Welcome to DietCare API",
         "data": {
             "docs_url": "/docs",
             "health_url": "/api/health",

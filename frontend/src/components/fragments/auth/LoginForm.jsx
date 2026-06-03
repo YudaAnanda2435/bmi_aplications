@@ -66,7 +66,7 @@ export default function LoginForm() {
               name="email"
               label="Email Admin"
               type="email"
-              placeholder="admin@sinagar.local"
+              placeholder="Masukkan email admin"
               autoComplete="off"
               value={formData.email}
               onChange={handleChange}
@@ -111,8 +111,7 @@ export default function LoginForm() {
 
         <div className="rounded-xl border border-[#e7e8e9] bg-[#f8f9fa] px-4 py-3">
           <p className="text-xs leading-5 text-[#64748b]">
-            Akses hanya untuk admin internal pengelola data penduduk Kampung
-            Sinagar.
+            Akses hanya untuk admin internal pengelola data penduduk.
           </p>
         </div>
 

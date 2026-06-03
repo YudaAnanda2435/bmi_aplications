@@ -6,8 +6,7 @@ export default function NotFoundContent() {
         Halaman tidak ditemukan
       </h1>
       <p className="mt-3 text-sm leading-6 text-slate-600">
-        Pastikan alamat halaman sudah sesuai dengan menu admin Sinagar
-        DietCare.
+        Pastikan alamat halaman sudah sesuai dengan menu admin DietCare.
       </p>
     </section>
   );

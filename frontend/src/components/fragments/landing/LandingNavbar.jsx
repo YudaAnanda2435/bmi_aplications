@@ -42,7 +42,7 @@ export default function LandingNavbar() {
               className="text-2xl font-bold tracking-tight text-gray-900"
               style={serifStyle}
             >
-              Sinagar DietCare
+              DietCare
             </span>
           </Link>
 
@@ -117,7 +117,7 @@ export default function LandingNavbar() {
                 className="text-2xl font-bold tracking-tight text-white"
                 style={serifStyle}
               >
-                Sinagar DietCare
+                DietCare
               </span>
             </Link>
 

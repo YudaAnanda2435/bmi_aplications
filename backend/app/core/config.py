@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_name: str = "Sinagar DietCare API"
+    app_name: str = "DietCare API"
     app_env: str = "development"
     database_url: str = "mysql+pymysql://root:@localhost:3306/sinagar_dietcare"
     secret_key: str = "change-this-secret-key"

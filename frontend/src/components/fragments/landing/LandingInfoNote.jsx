@@ -20,7 +20,7 @@ export default function LandingInfoNote() {
               Informasi Awal dan Alat Bantu
             </h4>
             <p className="font-medium leading-relaxed text-gray-600">
-              Sinagar DietCare dirancang sebagai alat bantu berbasis data.
+              DietCare dirancang sebagai alat bantu berbasis data.
               Hasil sistem bersifat informasi awal dan tidak menggantikan saran
               tenaga kesehatan.
             </p>

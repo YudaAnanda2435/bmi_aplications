@@ -1,6 +1,6 @@
-# Sinagar DietCare API
+# DietCare API
 
-Backend FastAPI untuk sistem internal admin Kampung Sinagar. Sistem ini menghitung BMI, menjalankan klasifikasi status obesitas menggunakan model final Categorical Naive Bayes, lalu menampilkan rekomendasi pola diet dan peringatan dini sebagai informasi awal.
+Backend FastAPI untuk DietCare. Sistem ini menghitung BMI, menjalankan klasifikasi status obesitas menggunakan model final Categorical Naive Bayes, lalu menampilkan rekomendasi pola diet dan peringatan dini sebagai informasi awal. Pada penelitian ini, implementasi sistem memakai studi kasus masyarakat Kampung Sinagar.
 
 Sistem ini bukan diagnosis medis dan tidak menggantikan saran tenaga kesehatan.
 
@@ -91,7 +91,7 @@ Copy-Item .env.example .env
 Sesuaikan `DATABASE_URL`. Untuk XAMPP default, gunakan user `root` tanpa password:
 
 ```env
-APP_NAME=Sinagar DietCare API
+APP_NAME=DietCare API
 APP_ENV=development
 DATABASE_URL=mysql+pymysql://root:@localhost:3306/sinagar_dietcare
 SECRET_KEY=change-this-secret-key

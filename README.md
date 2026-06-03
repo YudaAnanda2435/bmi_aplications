@@ -1,12 +1,12 @@
 # Sistem Klasifikasi Status Obesitas dan Rekomendasi Pola Diet Berbasis Web
 
-Sinagar DietCare adalah web admin untuk mengelola data penduduk, melakukan klasifikasi status obesitas, menampilkan rekomendasi pola diet, jadwal makan, peringatan dini, laporan, riwayat klasifikasi, import Excel, dan cetak PDF laporan.
+DietCare adalah sistem berbasis web yang digunakan untuk membantu admin atau pengelola dalam melakukan klasifikasi status obesitas, rekomendasi pola diet, jadwal makan, peringatan dini, laporan, riwayat klasifikasi, import Excel, dan cetak PDF.
 
-Sistem ini dibuat untuk kebutuhan akademik/skripsi dengan studi kasus masyarakat Kampung Sinagar. Pengguna utama sistem adalah admin, peneliti, atau pengelola data. Penduduk tidak memiliki akun publik dan hanya menjadi data yang dikelola oleh admin.
+Sistem ini dapat digunakan secara umum, sedangkan pada penelitian ini implementasi dilakukan pada studi kasus masyarakat Kampung Sinagar. Pengguna utama sistem adalah admin, peneliti, atau pengelola data. Penduduk tidak memiliki akun publik dan hanya menjadi data yang dikelola oleh admin.
 
 ## Deskripsi Singkat Sistem
 
-Sinagar DietCare digunakan oleh admin atau pengelola untuk:
+DietCare digunakan oleh admin atau pengelola untuk:
 
 - Mengelola data penduduk.
 - Input manual data penduduk.
@@ -357,7 +357,7 @@ File `backend/.env.example` adalah template. Salin file tersebut menjadi `backen
 Contoh konfigurasi:
 
 ```env
-APP_NAME=Sinagar DietCare API
+APP_NAME=DietCare API
 APP_ENV=development
 
 DATABASE_URL=mysql+pymysql://root:@localhost:3306/sinagar_dietcare

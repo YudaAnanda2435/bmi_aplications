@@ -1,4 +1,4 @@
-# Panduan Testing Swagger - Sinagar DietCare API
+# Panduan Testing Swagger - DietCare API
 
 Jalankan backend dari folder `backend`:
 
@@ -51,7 +51,7 @@ Expected:
 ```json
 {
   "success": true,
-  "message": "Sinagar DietCare API is running",
+  "message": "DietCare API is running",
   "data": {}
 }
 ```

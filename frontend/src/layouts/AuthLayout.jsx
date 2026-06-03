@@ -18,7 +18,7 @@ const loginSlides = [
     eyebrow: "Dashboard Admin",
     title: "Data penduduk dan hasil klasifikasi dalam satu ruang kerja.",
     description:
-      "Pantau input data, status klasifikasi, dan peringatan dini masyarakat Kampung Sinagar.",
+      "Pantau input data, status klasifikasi, dan peringatan dini dalam satu sistem.",
     icon: ClipboardList,
     cards: [
       { icon: UsersRound, label: "Penduduk", value: "Data" },
@@ -132,7 +132,7 @@ function LoginCarousel({ compact = false }) {
                     <div className="mb-4 flex items-center justify-between">
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#dbe6d9]">
-                          Sinagar DietCare
+                          DietCare
                         </p>
                         <p className="mt-1 text-2xl font-bold">
                           Dashboard Admin
@@ -240,7 +240,7 @@ export default function AuthLayout() {
               </div>
             </div>
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#3a6936]">
-              Sinagar DietCare
+              DietCare
             </p>
             <h1 className="mt-3 text-3xl font-bold leading-10 text-[#111827]">
               Selamat Datang Kembali

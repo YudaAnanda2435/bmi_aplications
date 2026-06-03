@@ -29,7 +29,7 @@ const navIcons = {
 function getPageHeader(pathname) {
   if (pathname === ROUTES.dashboard) {
     return {
-      title: "Dashboard Sinagar DietCare",
+      title: "Dashboard DietCare",
       description:
         "Pantau data penduduk, hasil klasifikasi, rekomendasi pola diet, dan peringatan dini.",
     };
@@ -92,7 +92,7 @@ function getPageHeader(pathname) {
   }
 
   return {
-    title: "Sinagar DietCare",
+    title: "DietCare",
     description: "Sistem klasifikasi status obesitas dan rekomendasi pola diet.",
   };
 }
@@ -144,7 +144,7 @@ function HelpDialog({ open, onClose }) {
             </h2>
             <p className="mt-2 text-sm leading-6 text-[#64748b]">
               Panduan singkat untuk admin atau petugas desa saat menggunakan
-              Sinagar DietCare.
+              DietCare.
             </p>
           </div>
           <button
@@ -319,7 +319,7 @@ export default function DashboardLayout() {
                 className="h-7 w-7 text-[#3a6936]"
               />
               <p className="truncate text-lg font-bold text-[#3a6936]">
-                Sinagar DietCare
+                DietCare
               </p>
             </div>
 
@@ -387,7 +387,7 @@ export default function DashboardLayout() {
                     DietCare
                   </p>
                   <p className="text-sm leading-5 text-[#bfc9bd]">
-                    Sinagar DietCare
+                    Sistem Admin
                   </p>
                 </div>
               </div>

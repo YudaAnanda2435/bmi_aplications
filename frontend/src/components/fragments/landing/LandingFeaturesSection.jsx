@@ -24,19 +24,19 @@ export default function LandingFeaturesSection() {
             return (
               <div
                 key={feature.title}
-                className="rounded-[2rem] bg-[#fcfbfa] p-8 text-center transition-transform duration-300 hover:-translate-y-2"
+                className="group rounded-[2rem] bg-[#fcfbfa] p-8 text-center transition-all duration-500 ease-out hover:-translate-y-2 hover:bg-white hover:shadow-[0_24px_60px_rgba(15,31,20,0.08)]"
                 data-aos="fade-up"
               >
                 <div className="relative mx-auto mb-6 h-24 w-24">
                   <div
                     className={[
-                      "absolute inset-0 opacity-50",
+                      "absolute inset-0 opacity-50 transition-all duration-500 ease-out group-hover:scale-110 group-hover:rotate-3 group-hover:opacity-70",
                       feature.shape,
                     ].join(" ")}
                   />
                   <div
                     className={[
-                      "absolute inset-0 flex items-center justify-center",
+                      "absolute inset-0 flex items-center justify-center transition-transform duration-500 ease-out group-hover:scale-110",
                       feature.iconClass,
                     ].join(" ")}
                   >
@@ -44,12 +44,12 @@ export default function LandingFeaturesSection() {
                   </div>
                 </div>
                 <h3
-                  className="mb-3 text-xl font-bold text-gray-900"
+                  className="mb-3 text-xl font-bold text-gray-900 transition-colors duration-500 ease-out group-hover:text-[#003d2b]"
                   style={serifStyle}
                 >
                   {feature.title}
                 </h3>
-                <p className="text-sm font-medium leading-relaxed text-gray-600">
+                <p className="text-sm font-medium leading-relaxed text-gray-600 transition-colors duration-500 ease-out group-hover:text-gray-700">
                   {feature.description}
                 </p>
               </div>

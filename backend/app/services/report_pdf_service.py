@@ -375,13 +375,13 @@ def build_report_pdf(report: dict[str, Any]) -> bytes:
         leftMargin=2 * cm,
         topMargin=1.8 * cm,
         bottomMargin=1.8 * cm,
-        title="Laporan Hasil Klasifikasi",
-        author="Sinagar DietCare",
+        title="DietCare - Laporan Klasifikasi Status Obesitas",
+        author="DietCare",
     )
 
     story: list[Any] = [
-        Paragraph("Laporan Hasil Klasifikasi", styles["title"]),
-        Paragraph("Sinagar DietCare", styles["subtitle"]),
+        Paragraph("DietCare - Laporan Klasifikasi Status Obesitas", styles["title"]),
+        Paragraph("Sistem Klasifikasi Status Obesitas dan Rekomendasi Pola Diet", styles["subtitle"]),
         Paragraph(f"Tanggal cetak: {_format_datetime(datetime.now())}", styles["subtitle"]),
         Spacer(1, 0.18 * cm),
     ]

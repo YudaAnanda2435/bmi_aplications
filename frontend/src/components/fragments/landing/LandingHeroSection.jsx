@@ -27,7 +27,7 @@ export default function LandingHeroSection() {
                 <ArrowDown aria-hidden="true" className="h-5 w-5 text-gray-800" />
               </div>
               <p className="text-lg font-medium leading-relaxed text-gray-800">
-                Sinagar DietCare membantu admin menginput data penduduk,
+                DietCare membantu admin menginput data penduduk,
                 menghitung BMI, menjalankan klasifikasi Naive Bayes, dan
                 menampilkan rekomendasi pola diet serta peringatan dini.
               </p>

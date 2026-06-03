@@ -3,7 +3,7 @@
 
 ## Project Identity
 
-Product name: Sinagar DietCare
+Product name: DietCare
 
 Project type:
 - Fullstack web application
@@ -15,7 +15,7 @@ Thesis context:
 - System direction: web-based admin system for obesity status classification, diet recommendation, and early warning.
 - Study case context: Masyarakat Kampung Sinagar.
 - Dataset source: public or journal obesity dataset.
-- Implementation context: admin inputs resident data from Kampung Sinagar into the web system.
+- Implementation context: admin inputs resident data into the web system; in this study case the data comes from Kampung Sinagar.
 - Model output: Underweight, Normal, Overweight, Obesity.
 - Additional output: diet recommendation and early warning status.
 

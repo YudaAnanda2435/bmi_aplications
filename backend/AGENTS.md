@@ -2,7 +2,7 @@
 
 ## Project Identity
 
-Product name: Sinagar DietCare
+Product name: DietCare
 
 Project type:
 - FastAPI backend
@@ -14,7 +14,7 @@ Thesis context:
 - Sistem Web Rekomendasi Pola Diet dan Peringatan Dini Berdasarkan Klasifikasi Status Obesitas Menggunakan Algoritma Naive Bayes.
 - Studi kasus: masyarakat Kampung Sinagar.
 - Dataset training: dataset publik atau dataset jurnal obesity.
-- Implementasi sistem: admin memasukkan data penduduk Kampung Sinagar ke web.
+- Implementasi sistem: admin memasukkan data penduduk ke web; pada penelitian ini studi kasusnya adalah Kampung Sinagar.
 - Output utama: klasifikasi status obesitas, rekomendasi pola diet, dan peringatan dini.
 
 Final model:
@@ -37,7 +37,7 @@ Do not change the thesis concept without explicit user approval.
 ## Core System Flow
 
 1. Admin login.
-2. Admin input data penduduk Kampung Sinagar.
+2. Admin input data penduduk.
 3. Backend menghitung BMI dari Height dan Weight.
 4. Backend membuat DataFrame sesuai fitur model final.
 5. Backend memuat model `naive_bayes_obesity_model_final.pkl`.
@@ -216,7 +216,7 @@ Fields:
 
 ### residents
 
-Purpose: stores Kampung Sinagar resident input data.
+Purpose: stores resident input data for the study case.
 
 Fields:
 - id
@@ -534,7 +534,7 @@ Avoid:
 Use `.env`:
 
 ```env
-APP_NAME=Sinagar DietCare API
+APP_NAME=DietCare API
 APP_ENV=development
 DATABASE_URL=mysql+pymysql://root:password@localhost:3306/sinagar_dietcare
 SECRET_KEY=change-this-secret-key

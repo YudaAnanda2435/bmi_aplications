@@ -19,7 +19,7 @@ export default function LandingFooter() {
                 />
               </div>
               <span className="text-2xl font-bold" style={serifStyle}>
-                Sinagar DietCare
+                DietCare
               </span>
             </div>
             <p className="mb-6 max-w-sm font-medium leading-relaxed text-emerald-100">
@@ -66,13 +66,13 @@ export default function LandingFooter() {
             </h4>
             <p className="font-medium leading-7 text-emerald-100">
               Digunakan untuk kebutuhan admin internal dan pengelolaan data
-              penduduk Kampung Sinagar.
+              penduduk.
             </p>
           </div>
         </div>
         <div className="flex flex-col items-center justify-between gap-4 border-t border-emerald-800/50 pt-8 md:flex-row">
           <p className="text-sm font-medium text-emerald-200">
-            Copyright 2026 Sinagar DietCare. Hak Cipta Dilindungi.
+            Copyright 2026 DietCare. Hak Cipta Dilindungi.
           </p>
         </div>
       </div>

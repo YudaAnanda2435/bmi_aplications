@@ -134,7 +134,7 @@ INDONESIAN_VALUE_MAPPINGS = {
 }
 
 SAMPLE_ROW = {
-    "name": "Budi Sinagar",
+    "name": "Budi Pratama",
     "gender": "Male",
     "age": 26,
     "height": 160,
@@ -154,7 +154,7 @@ SAMPLE_ROW = {
 }
 
 INDONESIAN_SAMPLE_ROW = {
-    "Nama Penduduk": "Budi Sinagar",
+    "Nama Penduduk": "Budi Pratama",
     "Jenis Kelamin": "Laki-laki",
     "Usia": 26,
     "Tinggi Badan (cm)": 160,

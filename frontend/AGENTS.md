@@ -3,7 +3,7 @@
 
 ## Frontend Scope
 
-This folder contains the React frontend for Sinagar DietCare.
+This folder contains the React frontend for DietCare.
 
 The frontend must be a clean admin dashboard that connects to the existing FastAPI backend.
 
