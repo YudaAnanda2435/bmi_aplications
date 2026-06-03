@@ -97,14 +97,15 @@ function getPageHeader(pathname) {
   };
 }
 
-function HeaderHelpButton({ className = "", onClick }) {
+function HeaderHelpButton({ className = "", displayClass = "inline-flex", onClick }) {
   return (
     <button
       type="button"
       aria-label="Buka bantuan"
       onClick={onClick}
       className={[
-        "inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-[#d4e8d5] bg-white px-3 py-2 text-sm font-bold text-[#3a6936] shadow-sm transition hover:bg-[#edf6ea]",
+        displayClass,
+        "shrink-0 items-center justify-center gap-2 rounded-full border border-[#d4e8d5] bg-white px-3 py-2 text-sm font-bold text-[#3a6936] shadow-sm transition hover:bg-[#edf6ea]",
         className,
       ].join(" ")}
     >
@@ -347,7 +348,7 @@ export default function DashboardLayout() {
           </div>
 
           <HeaderHelpButton
-            className="hidden md:inline-flex"
+            displayClass="hidden md:inline-flex"
             onClick={handleHelpClick}
           />
         </header>
