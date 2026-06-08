@@ -23,16 +23,30 @@ def serialize_recent_classification(result: ClassificationResult) -> dict[str, o
     }
 
 
-def get_dashboard_summary(db: Session) -> dict[str, object]:
-    total_residents = db.scalar(select(func.count(Resident.id))) or 0
-    total_classifications = db.scalar(select(func.count(ClassificationResult.id))) or 0
+def get_dashboard_summary(db: Session, user_id: int) -> dict[str, object]:
+    total_residents = (
+        db.scalar(
+            select(func.count(Resident.id)).where(Resident.user_id == user_id)
+        )
+        or 0
+    )
+    total_classifications = (
+        db.scalar(
+            select(func.count(ClassificationResult.id)).where(
+                ClassificationResult.user_id == user_id
+            )
+        )
+        or 0
+    )
 
     distribution = {label: 0 for label in CLASS_LABELS}
     rows = db.execute(
         select(
             ClassificationResult.predicted_class,
             func.count(ClassificationResult.id),
-        ).group_by(ClassificationResult.predicted_class)
+        )
+        .where(ClassificationResult.user_id == user_id)
+        .group_by(ClassificationResult.predicted_class)
     ).all()
 
     for predicted_class, total in rows:
@@ -41,6 +55,7 @@ def get_dashboard_summary(db: Session) -> dict[str, object]:
     recent_classifications = db.scalars(
         select(ClassificationResult)
         .options(joinedload(ClassificationResult.resident))
+        .where(ClassificationResult.user_id == user_id)
         .order_by(ClassificationResult.created_at.desc(), ClassificationResult.id.desc())
         .limit(5)
     ).all()

@@ -1,6 +1,6 @@
 # DietCare API
 
-Backend FastAPI untuk DietCare. Sistem ini menghitung BMI, menjalankan klasifikasi status obesitas menggunakan model final Categorical Naive Bayes, lalu menampilkan rekomendasi pola diet dan peringatan dini sebagai informasi awal. Pada penelitian ini, implementasi sistem memakai studi kasus masyarakat Kampung Sinagar.
+Backend FastAPI untuk DietCare. Sistem ini menghitung BMI, menjalankan klasifikasi status obesitas menggunakan model final Categorical Naive Bayes, lalu menampilkan rekomendasi pola diet dan peringatan dini sebagai informasi awal. Setiap data penduduk dan hasil klasifikasi dimiliki oleh akun pengguna yang sedang login.
 
 Sistem ini bukan diagnosis medis dan tidak menggantikan saran tenaga kesehatan.
 
@@ -8,7 +8,7 @@ Sistem ini bukan diagnosis medis dan tidak menggantikan saran tenaga kesehatan.
 
 Fitur backend:
 
-- Admin login dengan JWT.
+- Register dan login pengguna dengan JWT.
 - CRUD data penduduk/resident.
 - Import data penduduk dari Excel.
 - Hitung BMI otomatis dari tinggi dan berat badan.
@@ -16,9 +16,9 @@ Fitur backend:
 - Klasifikasi massal dari data Excel.
 - Simpan hasil klasifikasi resident.
 - Dashboard ringkas.
-- Report/list riwayat klasifikasi.
+- Report/list riwayat klasifikasi per pengguna.
 
-Tidak ada fitur di luar scope skripsi seperti konsultasi dokter, diagnosis medis pasti, resep/obat, marketplace, payment, registrasi publik, subscription, atau manajemen rumah sakit.
+Tidak ada fitur di luar scope seperti konsultasi dokter, diagnosis medis pasti, resep/obat, marketplace, payment, subscription, multi-role, atau manajemen rumah sakit.
 
 ## Model Final
 
@@ -100,34 +100,54 @@ ACCESS_TOKEN_EXPIRE_MINUTES=1440
 MODEL_PATH=ml_models/naive_bayes_obesity_model_final.pkl
 MODEL_METADATA_PATH=ml_models/model_metadata_final.json
 BACKEND_CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-DEFAULT_ADMIN_NAME=Administrator
-DEFAULT_ADMIN_EMAIL=admin@sinagar.local
-DEFAULT_ADMIN_PASSWORD=admin123
+DEFAULT_USER_NAME=Pengguna Development
+DEFAULT_USER_EMAIL=user@dietcare.local
+DEFAULT_USER_PASSWORD=user123
 ```
 
-Saat server startup, tabel dibuat otomatis dengan SQLAlchemy `create_all`.
+Saat server startup, tabel dibuat otomatis dengan SQLAlchemy `create_all`. Untuk database lama, backend juga menambahkan kolom ownership dasar jika belum ada.
 
-## Admin Default
+## User Default Development
 
-Admin default hanya dibuat saat:
+User default hanya dibuat saat:
 
 ```env
 APP_ENV=development
-DEFAULT_ADMIN_PASSWORD=...
+DEFAULT_USER_PASSWORD=...
 ```
 
-Jika email admin sudah ada di database, backend tidak akan membuat ulang admin tersebut.
+Jika email user sudah ada di database, backend tidak akan membuat ulang user tersebut.
 
 Password disimpan sebagai hash bcrypt, bukan plain text.
 
 Untuk Swagger Authorize, gunakan:
 
 ```text
-username: admin@sinagar.local
-password: admin123
+username: user@dietcare.local
+password: user123
 ```
 
-Field `username` pada Swagger OAuth2 dipakai sebagai email admin.
+Field `username` pada Swagger OAuth2 dipakai sebagai email user.
+
+## Migration Database Lama
+
+Jika database sudah pernah dibuat sebelum fitur register/user-owned data, backend akan mencoba menambahkan kolom dasar saat startup. Untuk menambahkan foreign key constraint secara eksplisit, jalankan migration manual:
+
+```text
+migrations/manual_user_auth_migration.sql
+```
+
+Jalankan di phpMyAdmin atau MySQL client pada database `sinagar_dietcare`.
+
+Migration ini menambahkan atau memastikan:
+
+- `users.is_active`
+- `residents.user_id`
+- `classification_results.user_id`
+- index dan foreign key ownership
+- backfill data lama dari `residents.created_by` atau user pertama di tabel `users`
+
+Jika database fresh/kosong, `create_all` akan membuat struktur baru saat server startup.
 
 ## Jalankan Server
 
@@ -152,23 +172,35 @@ Jika port 8000 sedang dipakai:
 Urutan test:
 
 1. `GET /api/health`
-2. `POST /api/auth/token` lewat tombol Authorize Swagger
-3. `GET /api/model/info`
-4. `POST /api/predictions/predict`
-5. `POST /api/residents`
-6. `GET /api/residents`
-7. `GET /api/residents/{resident_id}`
-8. `PUT /api/residents/{resident_id}`
-9. `GET /api/residents/import-template`
-10. `POST /api/residents/import-preview`
-11. `POST /api/residents/import-classify`
-12. `POST /api/predictions/residents/{resident_id}`
-13. `GET /api/dashboard/summary`
-14. `GET /api/reports`
-15. `GET /api/reports/latest`
-16. `GET /api/reports/history`
-17. `GET /api/reports/{classification_id}`
-18. `DELETE /api/residents/{resident_id}`
+2. `POST /api/auth/register`
+3. `POST /api/auth/token` lewat tombol Authorize Swagger
+4. `GET /api/auth/me`
+5. `GET /api/model/info`
+6. `POST /api/predictions/predict`
+7. `POST /api/residents`
+8. `GET /api/residents`
+9. `GET /api/residents/{resident_id}`
+10. `PUT /api/residents/{resident_id}`
+11. `GET /api/residents/import-template`
+12. `POST /api/residents/import-preview`
+13. `POST /api/residents/import-classify`
+14. `POST /api/predictions/residents/{resident_id}`
+15. `GET /api/dashboard/summary`
+16. `GET /api/reports`
+17. `GET /api/reports/latest`
+18. `GET /api/reports/history`
+19. `GET /api/reports/{classification_id}`
+20. `GET /api/reports/{classification_id}/pdf`
+21. `DELETE /api/residents/{resident_id}`
+
+Untuk test ownership:
+
+1. Register User A dan User B.
+2. Login sebagai User A, tambah resident, klasifikasi, lalu catat `resident_id` dan `classification_id`.
+3. Login sebagai User B.
+4. Pastikan `GET /api/residents` tidak menampilkan data User A.
+5. Pastikan akses `GET /api/residents/{resident_id}` milik User A ditolak.
+6. Pastikan akses `GET /api/reports/{classification_id}` dan PDF milik User A ditolak.
 
 Panduan detail ada di:
 
@@ -247,7 +279,7 @@ name, gender, age, height, weight, family_history_with_overweight,
 favc, fcvc, ncp, caec, smoke, ch2o, scc, faf, tue, calc, mtrans
 ```
 
-Admin tidak perlu mengisi BMI. Backend menghitung BMI otomatis dan menyimpan hasil klasifikasi ke `classification_results`.
+Pengguna tidak perlu mengisi BMI. Backend menghitung BMI otomatis dan menyimpan hasil klasifikasi ke `classification_results` milik akun yang login.
 
 ## Input Tinggi Badan dan BMI
 

@@ -144,7 +144,7 @@ function HelpDialog({ open, onClose }) {
               Bantuan Penggunaan
             </h2>
             <p className="mt-2 text-sm leading-6 text-[#64748b]">
-              Panduan singkat untuk admin atau petugas desa saat menggunakan
+              Panduan singkat untuk pengguna saat menggunakan
               DietCare.
             </p>
           </div>
@@ -184,11 +184,12 @@ function HelpDialog({ open, onClose }) {
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const pageHeader = getPageHeader(location.pathname);
+  const displayName = user?.name || "Pengguna";
 
   useEffect(() => {
     function handleEscape(event) {
@@ -233,16 +234,22 @@ export default function DashboardLayout() {
     <div className="min-h-screen bg-[#f8f9fa] text-[#191c1d]">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[240px] flex-col justify-between bg-[#0f1f14] px-4 py-6 text-[#bfc9bd] shadow-sm md:flex">
         <div>
-          <div className="mb-10 flex gap-2 flex-row items-center px-4 text-center">
-            <Sparkles
-              aria-hidden="true"
-              className="h-6 w-6"
-              fill="currentColor"
-            />
-            <p className="text-xl font-bold leading-7 text-[#bbf1b0]">
-              DietCare
+          <div className="flex items-start flex-col mb-10 justify-start">
+            <div className="mb-1 flex gap-2 flex-row justify-start items-center text-center">
+              <Sparkles
+                aria-hidden="true"
+                className="h-6 w-6"
+                fill="currentColor"
+              />
+              <div className="min-w-0 text-left">
+                <p className="text-xl font-bold leading-7 text-[#bbf1b0]">
+                  DietCare
+                </p>
+              </div>
+            </div>
+            <p className="truncate text-sm leading-5 text-[#bfc9bd]">
+              Halo, {displayName}
             </p>
-            {/* <p className="text-sm leading-5 text-[#bfc9bd]">Village Admin</p> */}
           </div>
 
           <nav className="space-y-2">
@@ -370,7 +377,9 @@ export default function DashboardLayout() {
         <div
           className={[
             "flex h-full flex-col justify-between px-5 py-6 transition duration-300 ease-out",
-            isMobileMenuOpen ? "scale-100 opacity-100" : "scale-[0.98] opacity-0",
+            isMobileMenuOpen
+              ? "scale-100 opacity-100"
+              : "scale-[0.98] opacity-0",
           ].join(" ")}
         >
           <div>
@@ -388,7 +397,7 @@ export default function DashboardLayout() {
                     DietCare
                   </p>
                   <p className="text-sm leading-5 text-[#bfc9bd]">
-                    Sistem Admin
+                    {displayName}
                   </p>
                 </div>
               </div>
@@ -465,13 +474,13 @@ export default function DashboardLayout() {
       <ConfirmDialog
         open={isLogoutConfirmOpen}
         title="Keluar dari Sistem?"
-        message="Sesi admin akan diakhiri dan Anda perlu masuk kembali untuk mengakses dashboard."
+        message="Sesi pengguna akan diakhiri dan Anda perlu masuk kembali untuk mengakses dashboard."
         confirmText="Ya, Keluar"
         cancelText="Tetap di Sistem"
-          variant="danger"
-          onConfirm={handleLogout}
-          onCancel={() => setIsLogoutConfirmOpen(false)}
-        />
+        variant="danger"
+        onConfirm={handleLogout}
+        onCancel={() => setIsLogoutConfirmOpen(false)}
+      />
       <HelpDialog open={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
     </div>
   );

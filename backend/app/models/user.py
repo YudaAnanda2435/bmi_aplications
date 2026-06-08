@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, String, func
+from sqlalchemy import Boolean, DateTime, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -13,6 +13,7 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     email: Mapped[str] = mapped_column(String(150), unique=True, index=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -25,4 +26,13 @@ class User(Base):
         nullable=False,
     )
 
-    residents = relationship("Resident", back_populates="creator")
+    residents = relationship(
+        "Resident",
+        back_populates="user",
+        foreign_keys="Resident.user_id",
+    )
+    classification_results = relationship(
+        "ClassificationResult",
+        back_populates="user",
+        foreign_keys="ClassificationResult.user_id",
+    )

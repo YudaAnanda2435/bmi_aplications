@@ -15,6 +15,11 @@ class ClassificationResult(Base):
         nullable=False,
         index=True,
     )
+    user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=True,
+        index=True,
+    )
     predicted_class: Mapped[str] = mapped_column(String(50), nullable=False)
     probability_underweight: Mapped[float | None] = mapped_column(Float, nullable=True)
     probability_normal: Mapped[float | None] = mapped_column(Float, nullable=True)
@@ -30,3 +35,4 @@ class ClassificationResult(Base):
     )
 
     resident = relationship("Resident", back_populates="classification_results")
+    user = relationship("User", back_populates="classification_results")

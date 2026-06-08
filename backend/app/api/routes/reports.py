@@ -4,9 +4,11 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy import and_, or_, select
 from sqlalchemy.orm import Session, aliased, joinedload
 
+from app.core.security import get_current_user
 from app.db.session import get_db
 from app.models.classification import ClassificationResult
 from app.models.resident import Resident
+from app.models.user import User
 from app.services.report_pdf_service import build_report_pdf
 from app.services.recommendation_service import get_recommendation_plan
 
@@ -17,6 +19,7 @@ def serialize_resident(resident: Resident) -> dict[str, Any]:
     return {
         "id": resident.id,
         "created_by": resident.created_by,
+        "user_id": resident.user_id,
         "name": resident.name,
         "gender": resident.gender,
         "age": resident.age,
@@ -44,6 +47,7 @@ def serialize_classification(result: ClassificationResult) -> dict[str, Any]:
     return {
         "id": result.id,
         "resident_id": result.resident_id,
+        "user_id": result.user_id,
         "predicted_class": result.predicted_class,
         "probabilities": {
             "Underweight": result.probability_underweight,
@@ -127,11 +131,18 @@ def serialize_report_row(result: ClassificationResult) -> dict[str, Any]:
     }
 
 
-def get_classification_or_404(db: Session, classification_id: int) -> ClassificationResult:
+def get_classification_or_404(
+    db: Session,
+    classification_id: int,
+    current_user: User,
+) -> ClassificationResult:
     result = db.scalar(
         select(ClassificationResult)
         .options(joinedload(ClassificationResult.resident))
-        .where(ClassificationResult.id == classification_id)
+        .where(
+            ClassificationResult.id == classification_id,
+            ClassificationResult.user_id == current_user.id,
+        )
     )
     if result is None:
         raise HTTPException(
@@ -150,12 +161,14 @@ def list_latest_reports(
     skip: Annotated[int, Query(ge=0)] = 0,
     limit: Annotated[int, Query(ge=1, le=500)] = 100,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> dict[str, Any]:
     newer_report = aliased(ClassificationResult)
     has_newer_report = (
         select(newer_report.id)
         .where(
             newer_report.resident_id == ClassificationResult.resident_id,
+            newer_report.user_id == current_user.id,
             or_(
                 newer_report.created_at > ClassificationResult.created_at,
                 and_(
@@ -170,7 +183,10 @@ def list_latest_reports(
     reports = db.scalars(
         select(ClassificationResult)
         .options(joinedload(ClassificationResult.resident))
-        .where(~has_newer_report)
+        .where(
+            ClassificationResult.user_id == current_user.id,
+            ~has_newer_report,
+        )
         .order_by(ClassificationResult.created_at.desc(), ClassificationResult.id.desc())
         .offset(skip)
         .limit(limit)
@@ -188,10 +204,12 @@ def list_report_history(
     skip: Annotated[int, Query(ge=0)] = 0,
     limit: Annotated[int, Query(ge=1, le=500)] = 100,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> dict[str, Any]:
     reports = db.scalars(
         select(ClassificationResult)
         .options(joinedload(ClassificationResult.resident))
+        .where(ClassificationResult.user_id == current_user.id)
         .order_by(ClassificationResult.created_at.desc(), ClassificationResult.id.desc())
         .offset(skip)
         .limit(limit)
@@ -209,10 +227,12 @@ def list_reports(
     skip: Annotated[int, Query(ge=0)] = 0,
     limit: Annotated[int, Query(ge=1, le=500)] = 100,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> dict[str, Any]:
     reports = db.scalars(
         select(ClassificationResult)
         .options(joinedload(ClassificationResult.resident))
+        .where(ClassificationResult.user_id == current_user.id)
         .order_by(ClassificationResult.created_at.desc(), ClassificationResult.id.desc())
         .offset(skip)
         .limit(limit)
@@ -229,8 +249,9 @@ def list_reports(
 def get_report_pdf(
     classification_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> Response:
-    report = get_classification_or_404(db, classification_id)
+    report = get_classification_or_404(db, classification_id, current_user)
     pdf_bytes = build_report_pdf(
         {
             "classification": serialize_classification_detail(report),
@@ -250,8 +271,9 @@ def get_report_pdf(
 def get_report_detail(
     classification_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> dict[str, Any]:
-    report = get_classification_or_404(db, classification_id)
+    report = get_classification_or_404(db, classification_id, current_user)
     return {
         "success": True,
         "message": "Report detail retrieved successfully",

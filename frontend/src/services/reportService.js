@@ -72,10 +72,17 @@ export async function downloadReportPdf(id) {
   try {
     const response = await apiClient.get(`/api/reports/${id}/pdf`, {
       responseType: "blob",
+      headers: {
+        Accept: "application/pdf",
+      },
     });
+    const blob =
+      response.data instanceof Blob
+        ? response.data
+        : new Blob([response.data], { type: "application/pdf" });
 
     return {
-      blob: response.data,
+      blob,
       filename: getPdfFilename(response, id),
     };
   } catch (error) {

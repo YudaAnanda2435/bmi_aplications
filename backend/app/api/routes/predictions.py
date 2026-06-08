@@ -1,11 +1,14 @@
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.security import get_current_user
 from app.db.session import get_db
 from app.models.classification import ClassificationResult
 from app.models.resident import Resident
+from app.models.user import User
 from app.schemas.classification import PredictionInput
 from app.services.ml_service import get_ml_service
 from app.utils.measurement import normalize_height_to_meter
@@ -34,8 +37,13 @@ def map_resident_to_model_features(resident: Resident) -> dict[str, Any]:
     }
 
 
-def get_resident_or_404(db: Session, resident_id: int) -> Resident:
-    resident = db.get(Resident, resident_id)
+def get_resident_or_404(db: Session, resident_id: int, current_user: User) -> Resident:
+    resident = db.scalar(
+        select(Resident).where(
+            Resident.id == resident_id,
+            Resident.user_id == current_user.id,
+        )
+    )
     if resident is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -75,8 +83,9 @@ def predict_obesity_status(payload: PredictionInput) -> dict[str, object]:
 def predict_stored_resident(
     resident_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> dict[str, object]:
-    resident = get_resident_or_404(db, resident_id)
+    resident = get_resident_or_404(db, resident_id, current_user)
     ml_service = get_ml_service()
 
     try:
@@ -94,6 +103,7 @@ def predict_stored_resident(
     probabilities = prediction["probabilities"]
     classification_result = ClassificationResult(
         resident_id=resident.id,
+        user_id=current_user.id,
         predicted_class=prediction["predicted_class"],
         probability_underweight=probabilities.get("Underweight"),
         probability_normal=probabilities.get("Normal"),

@@ -13,8 +13,11 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 1440
     model_path: str = "ml_models/naive_bayes_obesity_model_final.pkl"
     model_metadata_path: str = "ml_models/model_metadata_final.json"
-    default_admin_name: str = "Administrator"
-    default_admin_email: str = "admin@sinagar.local"
+    default_user_name: str | None = None
+    default_user_email: str | None = None
+    default_user_password: str | None = None
+    default_admin_name: str | None = None
+    default_admin_email: str | None = None
     default_admin_password: str | None = None
     backend_cors_origins: str = Field(
         default="http://localhost:5173,http://localhost:3000"
@@ -34,6 +37,18 @@ class Settings(BaseSettings):
             for origin in self.backend_cors_origins.split(",")
             if origin.strip()
         ]
+
+    @property
+    def development_user_name(self) -> str:
+        return self.default_user_name or self.default_admin_name or "Pengguna Development"
+
+    @property
+    def development_user_email(self) -> str:
+        return self.default_user_email or self.default_admin_email or "user@dietcare.local"
+
+    @property
+    def development_user_password(self) -> str | None:
+        return self.default_user_password or self.default_admin_password
 
 
 @lru_cache

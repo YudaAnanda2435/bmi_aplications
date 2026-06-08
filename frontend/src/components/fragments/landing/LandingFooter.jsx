@@ -65,7 +65,7 @@ export default function LandingFooter() {
               Catatan
             </h4>
             <p className="font-medium leading-7 text-emerald-100">
-              Digunakan untuk kebutuhan admin internal dan pengelolaan data
+              Digunakan untuk kebutuhan pengguna terdaftar dan pengelolaan data
               penduduk.
             </p>
           </div>

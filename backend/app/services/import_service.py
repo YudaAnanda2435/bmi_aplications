@@ -282,7 +282,11 @@ def import_and_classify_residents(
 
     for row in validation_result["valid_rows"]:
         try:
-            resident = Resident(created_by=created_by, **_resident_fields(row))
+            resident = Resident(
+                created_by=created_by,
+                user_id=created_by,
+                **_resident_fields(row),
+            )
             db.add(resident)
             db.flush()
 
@@ -290,6 +294,7 @@ def import_and_classify_residents(
             probabilities = prediction["probabilities"]
             classification_result = ClassificationResult(
                 resident_id=resident.id,
+                user_id=created_by,
                 predicted_class=prediction["predicted_class"],
                 probability_underweight=probabilities.get("Underweight"),
                 probability_normal=probabilities.get("Normal"),

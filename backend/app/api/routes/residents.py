@@ -25,8 +25,13 @@ def serialize_resident(resident: Resident) -> dict[str, Any]:
     return ResidentResponse.model_validate(resident).model_dump(mode="json")
 
 
-def get_resident_or_404(db: Session, resident_id: int) -> Resident:
-    resident = db.get(Resident, resident_id)
+def get_resident_or_404(db: Session, resident_id: int, current_user: User) -> Resident:
+    resident = db.scalar(
+        select(Resident).where(
+            Resident.id == resident_id,
+            Resident.user_id == current_user.id,
+        )
+    )
     if resident is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -44,9 +49,11 @@ def list_residents(
     skip: Annotated[int, Query(ge=0)] = 0,
     limit: Annotated[int, Query(ge=1, le=500)] = 100,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> dict[str, Any]:
     residents = db.scalars(
         select(Resident)
+        .where(Resident.user_id == current_user.id)
         .order_by(Resident.created_at.desc(), Resident.id.desc())
         .offset(skip)
         .limit(limit)
@@ -120,8 +127,11 @@ async def import_and_classify(
 def create_resident(
     payload: ResidentCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> dict[str, Any]:
     resident_data = payload.model_dump()
+    resident_data["created_by"] = current_user.id
+    resident_data["user_id"] = current_user.id
     resident_data["height"] = normalize_height_to_meter(resident_data["height"])
     resident_data["bmi"] = round(calculate_bmi(
         height=resident_data["height"],
@@ -144,8 +154,9 @@ def create_resident(
 def get_resident(
     resident_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> dict[str, Any]:
-    resident = get_resident_or_404(db, resident_id)
+    resident = get_resident_or_404(db, resident_id, current_user)
     return {
         "success": True,
         "message": "Resident retrieved successfully",
@@ -158,8 +169,9 @@ def update_resident(
     resident_id: int,
     payload: ResidentUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> dict[str, Any]:
-    resident = get_resident_or_404(db, resident_id)
+    resident = get_resident_or_404(db, resident_id, current_user)
     update_data = payload.model_dump(exclude_unset=True)
 
     if "height" in update_data:
@@ -186,8 +198,9 @@ def update_resident(
 def delete_resident(
     resident_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> dict[str, Any]:
-    resident = get_resident_or_404(db, resident_id)
+    resident = get_resident_or_404(db, resident_id, current_user)
     db.delete(resident)
     db.commit()
 

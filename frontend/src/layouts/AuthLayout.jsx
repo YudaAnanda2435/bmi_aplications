@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import {
   Activity,
   ArrowLeft,
@@ -12,10 +12,11 @@ import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
+import { ROUTES } from "../constants/routes";
 
 const loginSlides = [
   {
-    eyebrow: "Dashboard Admin",
+    eyebrow: "Dashboard Pengguna",
     title: "Data penduduk dan hasil klasifikasi dalam satu ruang kerja.",
     description:
       "Pantau input data, status klasifikasi, dan peringatan dini dalam satu sistem.",
@@ -28,7 +29,7 @@ const loginSlides = [
   },
   {
     eyebrow: "Informasi Awal",
-    title: "Bantu admin membaca kondisi warga dengan lebih terarah.",
+    title: "Bantu pengguna membaca kondisi dengan lebih terarah.",
     description:
       "Hasil sistem ditampilkan sebagai alat bantu, lengkap dengan rekomendasi pola diet awal.",
     icon: Activity,
@@ -42,7 +43,7 @@ const loginSlides = [
     eyebrow: "Klasifikasi Massal",
     title: "Kelola data manual atau import Excel tanpa mengubah alur kerja.",
     description:
-      "Data valid dapat disimpan dan diklasifikasikan untuk mempercepat pekerjaan admin.",
+      "Data valid dapat disimpan dan diklasifikasikan untuk mempercepat pekerjaan pengguna.",
     icon: UsersRound,
     cards: [
       { icon: ClipboardList, label: "Template", value: "Excel" },
@@ -135,7 +136,7 @@ function LoginCarousel({ compact = false }) {
                           DietCare
                         </p>
                         <p className="mt-1 text-2xl font-bold">
-                          Dashboard Admin
+                          Dashboard Pengguna
                         </p>
                       </div>
                       <Activity
@@ -218,6 +219,9 @@ function LoginCarousel({ compact = false }) {
 }
 
 export default function AuthLayout() {
+  const location = useLocation();
+  const isRegisterPage = location.pathname === ROUTES.register;
+
   return (
     <main className="grid min-h-screen bg-white text-[#191c1d] lg:grid-cols-[48%_52%]">
       <Link
@@ -243,11 +247,12 @@ export default function AuthLayout() {
               DietCare
             </p>
             <h1 className="mt-3 text-3xl font-bold leading-10 text-[#111827]">
-              Selamat Datang Kembali
+              {isRegisterPage ? "Buat Akun Pengguna" : "Selamat Datang Kembali"}
             </h1>
             <p className="mt-2 text-sm leading-6 text-[#64748b]">
-              Masuk untuk mengelola data penduduk, laporan klasifikasi, dan
-              peringatan dini sebagai informasi awal.
+              {isRegisterPage
+                ? "Daftar untuk mulai mengelola data, klasifikasi, dan laporan."
+                : "Masuk untuk mengelola data penduduk, laporan klasifikasi, dan peringatan dini sebagai informasi awal."}
             </p>
           </div>
           <div className="mb-6 lg:hidden">

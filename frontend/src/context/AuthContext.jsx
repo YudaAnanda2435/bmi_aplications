@@ -1,4 +1,4 @@
-import { createContext, useMemo, useState } from "react";
+import { useEffect, createContext, useMemo, useState } from "react";
 import authService from "../services/authService";
 
 const TOKEN_KEY = "access_token";
@@ -24,11 +24,36 @@ export function AuthProvider({ children }) {
     return data;
   }
 
+  async function register(payload) {
+    return authService.register(payload);
+  }
+
+  async function refreshUser() {
+    if (!token) {
+      setUser(null);
+      return null;
+    }
+
+    const currentUser = await authService.getCurrentUser();
+    setUser(currentUser || null);
+    return currentUser;
+  }
+
   function logout() {
     localStorage.removeItem(TOKEN_KEY);
     setToken(null);
     setUser(null);
   }
+
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+
+    refreshUser().catch(() => {
+      setUser(null);
+    });
+  }, [token]);
 
   const value = useMemo(
     () => ({
@@ -36,6 +61,8 @@ export function AuthProvider({ children }) {
       user,
       isAuthenticated: Boolean(token),
       login,
+      register,
+      refreshUser,
       logout,
     }),
     [token, user]

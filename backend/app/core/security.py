@@ -74,6 +74,6 @@ def get_current_user(
         raise credentials_exception from exc
 
     user = db.get(User, user_id)
-    if user is None:
+    if user is None or not user.is_active:
         raise credentials_exception
     return user

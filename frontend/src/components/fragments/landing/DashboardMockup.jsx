@@ -22,7 +22,7 @@ export default function DashboardMockup() {
             <span className="h-3 w-3 rounded-full bg-green-400" />
           </div>
           <div className="mx-auto rounded border border-gray-200 bg-white px-3 py-1 text-xs text-gray-500">
-            Dashboard Admin
+            Dashboard Pengguna
           </div>
         </div>
         <div className="p-6">

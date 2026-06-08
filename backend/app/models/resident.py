@@ -15,6 +15,11 @@ class Resident(Base):
         nullable=True,
         index=True,
     )
+    user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=True,
+        index=True,
+    )
     name: Mapped[str] = mapped_column(String(150), nullable=False)
     gender: Mapped[str] = mapped_column(String(20), nullable=False)
     age: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -45,7 +50,8 @@ class Resident(Base):
         nullable=False,
     )
 
-    creator = relationship("User", back_populates="residents")
+    user = relationship("User", back_populates="residents", foreign_keys=[user_id])
+    creator = relationship("User", foreign_keys=[created_by])
     classification_results = relationship(
         "ClassificationResult",
         back_populates="resident",

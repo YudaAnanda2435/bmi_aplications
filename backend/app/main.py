@@ -33,8 +33,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 app = FastAPI(
     title=settings.app_name,
     description=(
-        "Backend API untuk sistem internal rekomendasi pola diet dan "
-        "peringatan dini berdasarkan klasifikasi status obesitas."
+        "Backend API untuk sistem rekomendasi pola diet dan peringatan dini "
+        "berdasarkan klasifikasi status obesitas."
     ),
     version="0.1.0",
     lifespan=lifespan,

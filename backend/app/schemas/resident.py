@@ -37,13 +37,10 @@ class ResidentBase(BaseModel):
 class ResidentCreate(ResidentBase):
     model_config = ConfigDict(extra="forbid")
 
-    created_by: int | None = None
-
 
 class ResidentUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    created_by: int | None = None
     name: str | None = Field(default=None, min_length=1, max_length=150)
     gender: GenderValue | None = None
     age: int | None = Field(default=None, gt=0, description="Age must be greater than 0")
@@ -76,6 +73,7 @@ class ResidentResponse(ResidentBase):
 
     id: int
     created_by: int | None
+    user_id: int | None
     bmi: float
     created_at: datetime
     updated_at: datetime

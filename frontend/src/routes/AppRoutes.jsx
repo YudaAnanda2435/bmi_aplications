@@ -3,6 +3,7 @@ import AuthLayout from "../layouts/AuthLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
 import LandingPage from "../pages/LandingPage";
 import LoginPage from "../pages/LoginPage";
+import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/DashboardPage";
 import ResidentsPage from "../pages/ResidentsPage";
 import ResidentCreatePage from "../pages/ResidentCreatePage";
@@ -21,6 +22,7 @@ export default function AppRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route element={<AuthLayout />}>
         <Route path={ROUTES.login} element={<LoginPage />} />
+        <Route path={ROUTES.register} element={<RegisterPage />} />
       </Route>
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>

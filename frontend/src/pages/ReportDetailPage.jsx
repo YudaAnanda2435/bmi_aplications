@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Button from "../components/elements/buttons/Button";
 import ActionLoadingModal from "../components/elements/feedback/ActionLoadingModal";
@@ -15,6 +15,7 @@ export default function ReportDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const isDownloadingPdfRef = useRef(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -49,10 +50,33 @@ export default function ReportDetailPage() {
   }, [id]);
 
   async function handleDownloadPdf() {
+    if (isDownloadingPdfRef.current) {
+      return;
+    }
+
+    isDownloadingPdfRef.current = true;
     setIsGeneratingPdf(true);
+    let pdfFile;
 
     try {
-      const { blob, filename } = await reportService.downloadReportPdf(id);
+      pdfFile = await reportService.downloadReportPdf(id);
+    } catch (error) {
+      showError("PDF laporan gagal dibuat.");
+      isDownloadingPdfRef.current = false;
+      setIsGeneratingPdf(false);
+      return;
+    }
+
+    const { blob, filename } = pdfFile;
+
+    if (!blob || blob.size === 0) {
+      showError("PDF laporan gagal dibuat.");
+      isDownloadingPdfRef.current = false;
+      setIsGeneratingPdf(false);
+      return;
+    }
+
+    try {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
 
@@ -60,15 +84,20 @@ export default function ReportDetailPage() {
       link.download = filename;
       document.body.appendChild(link);
       link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-
-      showSuccess("PDF laporan berhasil dibuat.");
+      window.setTimeout(() => {
+        if (document.body.contains(link)) {
+          link.remove();
+        }
+        window.URL.revokeObjectURL(url);
+      }, 60000);
     } catch (error) {
-      showError("PDF laporan gagal dibuat.");
-    } finally {
-      setIsGeneratingPdf(false);
+      // Request PDF sudah berhasil. Jangan tampilkan toast gagal untuk error
+      // kecil dari browser saat memproses blob download.
     }
+
+    showSuccess("PDF laporan berhasil dibuat.");
+    isDownloadingPdfRef.current = false;
+    setIsGeneratingPdf(false);
   }
 
   if (isLoading) {

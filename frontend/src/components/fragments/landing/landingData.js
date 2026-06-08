@@ -42,7 +42,7 @@ export const features = [
 
 export const steps = [
   {
-    title: "Admin Masuk",
+    title: "Masuk Pengguna",
     description: "Login ke dashboard sistem melalui halaman masuk terpusat.",
   },
   {
